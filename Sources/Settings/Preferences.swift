@@ -7,6 +7,7 @@ final class Preferences: ObservableObject {
     private enum Keys {
         static let selectedCalendarIdentifiers = "selectedCalendarIdentifiers"
         static let showsMenuBarCountdown = "showsMenuBarCountdown"
+        static let showsMenuBarProgressBar = "showsMenuBarProgressBar"
         static let notifiesBeforeEvents = "notifiesBeforeEvents"
         static let showsRestingProgressLine = "showsRestingProgressLine"
         static let dayStartMinutes = "dayStartMinutes"
@@ -28,6 +29,15 @@ final class Preferences: ObservableObject {
         didSet {
             defaults.set(showsMenuBarCountdown, forKey: Keys.showsMenuBarCountdown)
             Log.preferences.debug("Menu-bar countdown \(self.showsMenuBarCountdown ? "on" : "off", privacy: .public)")
+        }
+    }
+
+    /// Replaces the menu-bar icon with a mini progress bar while an event or a
+    /// break is running.
+    @Published var showsMenuBarProgressBar: Bool {
+        didSet {
+            defaults.set(showsMenuBarProgressBar, forKey: Keys.showsMenuBarProgressBar)
+            Log.preferences.debug("Menu-bar progress bar \(self.showsMenuBarProgressBar ? "on" : "off", privacy: .public)")
         }
     }
 
@@ -84,6 +94,7 @@ final class Preferences: ObservableObject {
 
         self.selectedCalendarIdentifiers = Set(defaults.stringArray(forKey: Keys.selectedCalendarIdentifiers) ?? [])
         self.showsMenuBarCountdown = Self.bool(in: defaults, forKey: Keys.showsMenuBarCountdown, default: true)
+        self.showsMenuBarProgressBar = Self.bool(in: defaults, forKey: Keys.showsMenuBarProgressBar, default: true)
         self.notifiesBeforeEvents = Self.bool(in: defaults, forKey: Keys.notifiesBeforeEvents, default: false)
         self.showsRestingProgressLine = Self.bool(in: defaults, forKey: Keys.showsRestingProgressLine, default: false)
         self.dayStartMinutes = Self.clampedDayStart(

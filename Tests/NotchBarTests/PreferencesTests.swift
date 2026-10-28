@@ -270,3 +270,20 @@ final class PreferencesTests: XCTestCase {
         XCTAssertEqual(Preferences(defaults: defaults).dayStartMinutes, 1439)
     }
 }
+
+// MARK: - Menu-bar progress bar toggle
+
+extension PreferencesTests {
+    func test_showsMenuBarProgressBar_defaultsToTrue_whenNeverSet() {
+        XCTAssertTrue(Preferences(defaults: defaults).showsMenuBarProgressBar)
+    }
+
+    func test_setShowsMenuBarProgressBar_persistsToDefaults() {
+        let prefs = Preferences(defaults: defaults)
+
+        prefs.showsMenuBarProgressBar = false
+
+        XCTAssertEqual(defaults.object(forKey: "showsMenuBarProgressBar") as? Bool, false)
+        XCTAssertFalse(Preferences(defaults: defaults).showsMenuBarProgressBar)
+    }
+}

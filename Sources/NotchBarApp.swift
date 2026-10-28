@@ -51,7 +51,7 @@ struct MenuBarStatusLabel: View {
     var body: some View {
         if let countdown = progressModel.menuBarText {
             HStack(spacing: 4) {
-                Image(systemName: "capsule.tophalf.filled")
+                menuBarIcon
                 Text(countdown)
                     .lineLimit(1)
                     .fixedSize()
@@ -60,8 +60,23 @@ struct MenuBarStatusLabel: View {
             .accessibilityLabel(Text("Remaining", bundle: Localized.resources))
             .accessibilityValue(Text(countdown))
         } else {
-            Image(systemName: "capsule.tophalf.filled")
+            menuBarIcon
                 .accessibilityLabel(Text(verbatim: "NotchBar"))
+                .accessibilityValue(Text(verbatim: progressBar.map { "\(Int(($0.progress * 100).rounded()))%" } ?? ""))
+        }
+    }
+
+    private var progressBar: (progress: Double, tint: Color)? { progressModel.menuBarBar }
+
+    /// The mini progress bar while something is running, else the capsule symbol.
+    @ViewBuilder private var menuBarIcon: some View {
+        if let bar = progressBar {
+            Image(nsImage: MenuBarProgressImage.image(
+                filledWidth: MenuBarProgressImage.filledWidth(for: bar.progress),
+                tint: bar.tint
+            ))
+        } else {
+            Image(systemName: "capsule.tophalf.filled")
         }
     }
 }

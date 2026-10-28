@@ -59,6 +59,8 @@ struct SettingsView: View {
 
             settingRow("Show countdown in the menu bar", isOn: $preferences.showsMenuBarCountdown)
 
+            settingRow("Show progress bar in the menu bar", isOn: $preferences.showsMenuBarProgressBar)
+
             settingRow("Notify me 5 minutes before an event starts or ends", isOn: $preferences.notifiesBeforeEvents)
 
             if preferences.notifiesBeforeEvents, notifier.authorizationState == .blocked {
@@ -100,6 +102,9 @@ struct SettingsView: View {
             onPreferencesChanged()
         }
         .onChange(of: preferences.showsMenuBarCountdown) { _, _ in
+            onPreferencesChanged()
+        }
+        .onChange(of: preferences.showsMenuBarProgressBar) { _, _ in
             onPreferencesChanged()
         }
         .onChange(of: preferences.notifiesBeforeEvents) { _, _ in
