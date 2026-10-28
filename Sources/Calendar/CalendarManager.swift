@@ -156,13 +156,14 @@ final class CalendarManager: ObservableObject {
         availableCalendars.filter { preferences.selectedCalendarIdentifiers.contains($0.calendarIdentifier) }
     }
 
-    func currentSnapshot(selectedCalendarIDs: Set<String>, now: Date = .now) -> EventProgressSnapshot {
+    func currentSnapshot(selectedCalendarIDs: Set<String>, dayStart: Date? = nil, now: Date = .now) -> EventProgressSnapshot {
         SnapshotBuilder.computeSnapshot(
             events: events,
             allDayEvents: allDayEvents,
             selectedCalendarIDs: selectedCalendarIDs,
             now: now,
-            calendar: .current
+            calendar: .current,
+            dayStart: dayStart
         )
     }
 

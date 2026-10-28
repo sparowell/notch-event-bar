@@ -497,12 +497,12 @@ final class SnapshotComputationTests: XCTestCase {
         XCTAssertEqual(snapshot.state, .onBreak)
     }
 
-    func test_upcomingToday_whenTheGapExceedsTwoHours() {
+    func test_onBreak_hasNoUpperLimitOnTheGap() {
         let now = fixedNoon()
         let snapshot = SnapshotBuilder.computeSnapshot(
             events: [
                 makeEvent(startOffset: -3600 - 3600, durationSeconds: 3600, relativeTo: now),
-                makeEvent(startOffset: 3601, durationSeconds: 3600, relativeTo: now),
+                makeEvent(startOffset: 3 * 3600, durationSeconds: 3600, relativeTo: now),
             ],
             selectedCalendarIDs: [calendarID],
             now: now,
@@ -510,7 +510,86 @@ final class SnapshotComputationTests: XCTestCase {
             locale: english
         )
 
+        XCTAssertEqual(snapshot.state, .onBreak)
+        XCTAssertEqual(snapshot.progress, 1.0 / 4.0, accuracy: 0.0001)
+    }
+
+    func test_onBreak_fromDayStart_whenNoEventEndedYet() {
+        let now = fixedNoon()
+        let dayStart = now.addingTimeInterval(-4 * 3600)
+        let snapshot = SnapshotBuilder.computeSnapshot(
+            events: [makeEvent(startOffset: 4 * 3600, durationSeconds: 3600, relativeTo: now)],
+            selectedCalendarIDs: [calendarID],
+            now: now,
+            calendar: calendar,
+            locale: english,
+            dayStart: dayStart
+        )
+
+        XCTAssertEqual(snapshot.state, .onBreak)
+        XCTAssertEqual(snapshot.progress, 0.5, accuracy: 0.0001)
+        XCTAssertEqual(snapshot.startTimeLabel, time(of: dayStart, locale: english))
+        XCTAssertEqual(snapshot.remainingSeconds, 4 * 3600)
+    }
+
+    func test_upcomingToday_beforeDayStart() {
+        let now = fixedNoon()
+        let snapshot = SnapshotBuilder.computeSnapshot(
+            events: [makeEvent(startOffset: 4 * 3600, durationSeconds: 3600, relativeTo: now)],
+            selectedCalendarIDs: [calendarID],
+            now: now,
+            calendar: calendar,
+            locale: english,
+            dayStart: now.addingTimeInterval(3600)
+        )
+
         XCTAssertEqual(snapshot.state, .upcomingToday)
+    }
+
+    func test_dayStart_isIgnored_whenAnEventAlreadyEndedToday() {
+        let now = fixedNoon()
+        let snapshot = SnapshotBuilder.computeSnapshot(
+            events: [
+                makeEvent(startOffset: -3600 - 600, durationSeconds: 3600, relativeTo: now),
+                makeEvent(startOffset: 30 * 60, durationSeconds: 3600, relativeTo: now),
+            ],
+            selectedCalendarIDs: [calendarID],
+            now: now,
+            calendar: calendar,
+            locale: english,
+            dayStart: now.addingTimeInterval(-4 * 3600)
+        )
+
+        XCTAssertEqual(snapshot.state, .onBreak)
+        XCTAssertEqual(snapshot.progress, 10.0 / 40.0, accuracy: 0.0001)
+    }
+
+    func test_startingSoon_winsOverDayStartWindow() {
+        let now = fixedNoon()
+        let snapshot = SnapshotBuilder.computeSnapshot(
+            events: [makeEvent(startOffset: 4 * 60, durationSeconds: 3600, relativeTo: now)],
+            selectedCalendarIDs: [calendarID],
+            now: now,
+            calendar: calendar,
+            locale: english,
+            dayStart: now.addingTimeInterval(-4 * 3600)
+        )
+
+        XCTAssertEqual(snapshot.state, .startingSoon)
+    }
+
+    func test_emptyToday_afterTheLastEvent_evenWithDayStart() {
+        let now = fixedNoon()
+        let snapshot = SnapshotBuilder.computeSnapshot(
+            events: [makeEvent(startOffset: -3 * 3600, durationSeconds: 3600, relativeTo: now)],
+            selectedCalendarIDs: [calendarID],
+            now: now,
+            calendar: calendar,
+            locale: english,
+            dayStart: now.addingTimeInterval(-4 * 3600)
+        )
+
+        XCTAssertEqual(snapshot.state, .emptyToday)
     }
 
     func test_upcomingToday_whenNothingEndedEarlierToday() {

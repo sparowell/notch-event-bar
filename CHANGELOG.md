@@ -19,8 +19,9 @@ NotchBar adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
   running event's — or the break's — progress, in the event's colour. Anything
   drawn at rest slides with the desktop during an interactive Space switch,
   which no window setting prevents, so it is opt-in.
-- **Breaks.** Between two tracked events of the same day, up to 2 hours apart,
-  the panel shows a grey `Break` with its own progress bar and the time left —
+- **Breaks.** Between two tracked events of the same day — or from the
+  *Start of day* setting (default 08:00) to the day's first event — with no
+  length limit, the panel shows a grey `Break` with its own progress bar and the time left —
   also in the menu-bar countdown — instead of a plain "next event" line.
 - **All-day events are named in every waiting state**, not only when the day is
   otherwise empty: `All day: <title>` sits under the message.

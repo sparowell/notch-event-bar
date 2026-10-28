@@ -242,4 +242,31 @@ final class PreferencesTests: XCTestCase {
         XCTAssertEqual(defaults.object(forKey: "showsRestingProgressLine") as? Bool, true)
         XCTAssertTrue(Preferences(defaults: defaults).showsRestingProgressLine)
     }
+
+    // MARK: - dayStartMinutes
+
+    func test_dayStartMinutes_defaultsTo0800() {
+        XCTAssertEqual(Preferences(defaults: defaults).dayStartMinutes, 480)
+    }
+
+    func test_dayStartMinutes_roundTripsThroughDefaults() {
+        let prefs = Preferences(defaults: defaults)
+
+        prefs.dayStartMinutes = 570
+
+        XCTAssertEqual(defaults.object(forKey: "dayStartMinutes") as? Int, 570)
+        XCTAssertEqual(Preferences(defaults: defaults).dayStartMinutes, 570)
+    }
+
+    func test_dayStartMinutes_clamps() {
+        let prefs = Preferences(defaults: defaults)
+
+        prefs.dayStartMinutes = 5000
+        XCTAssertEqual(prefs.dayStartMinutes, 1439)
+        prefs.dayStartMinutes = -3
+        XCTAssertEqual(prefs.dayStartMinutes, 0)
+
+        defaults.set(99999, forKey: "dayStartMinutes")
+        XCTAssertEqual(Preferences(defaults: defaults).dayStartMinutes, 1439)
+    }
 }

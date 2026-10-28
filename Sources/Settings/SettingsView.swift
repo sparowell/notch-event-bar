@@ -67,6 +67,8 @@ struct SettingsView: View {
 
             settingRow("Show a progress line under the notch", isOn: $preferences.showsRestingProgressLine)
 
+            dayStartRow
+
             settingRow("Launch at login", isOn: $launchAtLoginEnabled)
                 .onChange(of: launchAtLoginEnabled) { _, newValue in
                     setLaunchAtLogin(newValue)
@@ -106,6 +108,9 @@ struct SettingsView: View {
         .onChange(of: preferences.showsRestingProgressLine) { _, _ in
             onPreferencesChanged()
         }
+        .onChange(of: preferences.dayStartMinutes) { _, _ in
+            onPreferencesChanged()
+        }
     }
 
     /// macOS only ever asks once. After a refusal the toggle above promises
@@ -122,6 +127,30 @@ struct SettingsView: View {
             } label: {
                 Text("Open System Settings", bundle: Localized.resources)
             }
+        }
+    }
+
+    /// Time of day as minutes after midnight, edited through a date picker.
+    private var dayStartRow: some View {
+        HStack(spacing: 8) {
+            Text("Start of day", bundle: Localized.resources)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            DatePicker(
+                "",
+                selection: Binding(
+                    get: {
+                        Calendar.current.startOfDay(for: .now)
+                            .addingTimeInterval(TimeInterval(preferences.dayStartMinutes * 60))
+                    },
+                    set: { date in
+                        let parts = Calendar.current.dateComponents([.hour, .minute], from: date)
+                        preferences.dayStartMinutes = (parts.hour ?? 8) * 60 + (parts.minute ?? 0)
+                    }
+                ),
+                displayedComponents: .hourAndMinute
+            )
+            .labelsHidden()
         }
     }
 
