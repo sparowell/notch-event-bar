@@ -121,6 +121,12 @@ final class EventProgressModel: ObservableObject {
         RestingProgressLine.progress(for: snapshot, enabled: preferences?.showsRestingProgressLine ?? false)
     }
 
+    /// Progress and colour of the mini bar that replaces the menu-bar icon, or
+    /// `nil` when the plain icon should show.
+    var menuBarBar: (progress: Double, tint: Color)? {
+        MenuBarProgressImage.fill(for: snapshot, enabled: preferences?.showsMenuBarProgressBar ?? false)
+    }
+
     var menuBarText: String? {
         MenuBarLabel.text(for: snapshot, enabled: preferences?.showsMenuBarCountdown ?? false)
     }
@@ -144,6 +150,7 @@ final class EventProgressModel: ObservableObject {
         idleTask = nil
 
         let needsIdleTick = preferences?.showsMenuBarCountdown == true
+            || preferences?.showsMenuBarProgressBar == true
             || preferences?.showsRestingProgressLine == true
         guard !isHoverVisible, needsIdleTick else { return }
 
