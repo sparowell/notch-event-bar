@@ -187,7 +187,11 @@ final class EventProgressModel: ObservableObject {
         case .unknown, .granted:
             updateSnapshot(
                 calendarManager.currentSnapshot(
-                    selectedCalendarIDs: preferences?.selectedCalendarIdentifiers ?? []
+                    selectedCalendarIDs: preferences?.selectedCalendarIdentifiers ?? [],
+                    dayStart: preferences.map { prefs in
+                        let calendar = Calendar.current
+                        return calendar.startOfDay(for: .now).addingTimeInterval(TimeInterval(prefs.dayStartMinutes * 60))
+                    }
                 )
             )
         }

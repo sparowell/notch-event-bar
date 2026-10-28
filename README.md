@@ -20,7 +20,7 @@ Minimalist macOS app that uses the physical notch to show progress on the curren
 | State | Trigger | Shown |
 |---|---|---|
 | **In progress** | Event overlaps now | Title (`+N` beside it when other tracked events run at the same time — the one ending first is shown), start–end times, animated progress bar, elapsed / remaining, `→ <title> <time>` for the next tracked event later today, + **Join** button when a meeting link is detected (Zoom, Meet, Teams, Webex) |
-| **Break** | A tracked event ended earlier today and the next starts within 2 hours of it | Same layout as *In progress*, in grey: `Break`, progress through the gap, elapsed / remaining, and the next event |
+| **Break** | The next tracked event is more than 5 minutes away today, and either an event ended earlier today or the *Start of day* setting (default 08:00) has passed | Same layout as *In progress*, in grey: `Break`, progress through the gap, elapsed / remaining, and the next event |
 | **Starting soon** | Next event in ≤ 5 minutes | `Starts in Xm — <title>` + **Join** button when a meeting link is detected (Zoom, Meet, Teams, Webex) |
 | **Upcoming today** | Next event later today | `Next: <title> in Xh Ymin` |
 | **Upcoming** | Next event is beyond today (up to 7 days out) | `Next: <title> — tomorrow 9:00`, or the weekday past tomorrow (`Tue 9:00`) |

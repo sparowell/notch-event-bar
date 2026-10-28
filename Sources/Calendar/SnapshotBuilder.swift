@@ -2,16 +2,14 @@ import Foundation
 import SwiftUI
 
 enum SnapshotBuilder {
-    /// Past this, the gap between two events is free time, not a break.
-    static let maximumBreak: TimeInterval = 2 * 3600
-
     static func computeSnapshot(
         events: [CalendarEvent],
         allDayEvents: [CalendarEvent] = [],
         selectedCalendarIDs: Set<String>,
         now: Date,
         calendar: Calendar,
-        locale: Locale = .current
+        locale: Locale = .current,
+        dayStart: Date? = nil
     ) -> EventProgressSnapshot {
         guard !selectedCalendarIDs.isEmpty else { return .noCalendar(locale: locale) }
 
@@ -56,9 +54,16 @@ enum SnapshotBuilder {
 
         if next.startDate < endOfToday {
             let lastEnd = relevant.filter { $0.endDate <= now }.map(\.endDate).max()
-            if let lastEnd, calendar.isDate(lastEnd, inSameDayAs: now),
-               next.startDate.timeIntervalSince(lastEnd) <= maximumBreak {
-                return breakSnapshot(from: lastEnd, until: next, now: now, calendar: calendar, locale: locale)
+            // The window opens when the last event ended, or, before any event
+            // today, at the user's start of day.
+            var windowStart: Date?
+            if let lastEnd, calendar.isDate(lastEnd, inSameDayAs: now) {
+                windowStart = lastEnd
+            } else if let dayStart, calendar.isDate(dayStart, inSameDayAs: now), now >= dayStart {
+                windowStart = dayStart
+            }
+            if let windowStart {
+                return breakSnapshot(from: windowStart, until: next, now: now, calendar: calendar, locale: locale)
             }
             var snapshot = upcomingTodaySnapshot(for: next, now: now, calendar: calendar, locale: locale)
             snapshot.allDayMessage = allDayMessage

@@ -9,6 +9,7 @@ final class Preferences: ObservableObject {
         static let showsMenuBarCountdown = "showsMenuBarCountdown"
         static let notifiesBeforeEvents = "notifiesBeforeEvents"
         static let showsRestingProgressLine = "showsRestingProgressLine"
+        static let dayStartMinutes = "dayStartMinutes"
         static let legacySingleIdentifier = "selectedCalendarIdentifier"
         static let legacySelectedCalendarIDs = "selectedCalendarIDs"
         static let legacyShowsNoMeetingState = "showsNoMeetingState"
@@ -50,6 +51,26 @@ final class Preferences: ObservableObject {
         }
     }
 
+    /// Minutes after midnight at which the day begins; the first break of the
+    /// day is measured from here when no event has ended yet.
+    @Published var dayStartMinutes: Int {
+        didSet {
+            let clamped = Self.clampedDayStart(dayStartMinutes)
+            if clamped != dayStartMinutes {
+                dayStartMinutes = clamped
+                return
+            }
+            defaults.set(dayStartMinutes, forKey: Keys.dayStartMinutes)
+            Log.preferences.debug("Day start \(self.dayStartMinutes)")
+        }
+    }
+
+    static let defaultDayStartMinutes = 8 * 60
+
+    static func clampedDayStart(_ minutes: Int) -> Int {
+        min(max(minutes, 0), 1439)
+    }
+
     var hasStoredSelection: Bool {
         defaults.object(forKey: Keys.selectedCalendarIdentifiers) != nil
     }
@@ -65,6 +86,14 @@ final class Preferences: ObservableObject {
         self.showsMenuBarCountdown = Self.bool(in: defaults, forKey: Keys.showsMenuBarCountdown, default: true)
         self.notifiesBeforeEvents = Self.bool(in: defaults, forKey: Keys.notifiesBeforeEvents, default: false)
         self.showsRestingProgressLine = Self.bool(in: defaults, forKey: Keys.showsRestingProgressLine, default: false)
+        self.dayStartMinutes = Self.clampedDayStart(
+            Self.int(in: defaults, forKey: Keys.dayStartMinutes, default: Self.defaultDayStartMinutes)
+        )
+    }
+
+    static func int(in defaults: UserDefaults, forKey key: String, default defaultValue: Int) -> Int {
+        guard let stored = defaults.object(forKey: key) as? Int else { return defaultValue }
+        return stored
     }
 
     /// `UserDefaults.bool(forKey:)` cannot distinguish "stored false" from
