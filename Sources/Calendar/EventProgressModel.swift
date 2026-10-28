@@ -122,7 +122,7 @@ final class EventProgressModel: ObservableObject {
     }
 
     var menuBarText: String? {
-        MenuBarLabel.text(for: snapshot, enabled: preferences?.showsMenuBarCountdown ?? false)
+        MenuBarLabel.text(for: snapshot, enabled: preferences?.showsMenuBarCountdown ?? false, now: Date())
     }
 
     deinit {
