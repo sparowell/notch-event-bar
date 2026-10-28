@@ -227,7 +227,8 @@ enum SnapshotBuilder {
     ) -> EventProgressSnapshot.NextEvent {
         EventProgressSnapshot.NextEvent(
             title: event.title.nilIfEmpty ?? Localized.string("Upcoming Meeting", locale: locale),
-            startTimeLabel: formattedTime(event.startDate, calendar: calendar, locale: locale)
+            startTimeLabel: formattedTime(event.startDate, calendar: calendar, locale: locale),
+            startDate: event.startDate
         )
     }
 

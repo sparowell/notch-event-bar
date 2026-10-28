@@ -41,6 +41,7 @@ struct EventProgressSnapshot: Equatable {
     struct NextEvent: Equatable {
         let title: String
         let startTimeLabel: String
+        let startDate: Date
     }
 
     static func noCalendar(locale: Locale = .current) -> EventProgressSnapshot {

@@ -380,7 +380,14 @@ final class SnapshotComputationTests: XCTestCase {
         )
 
         XCTAssertEqual(snapshot.state, .inProgress)
-        XCTAssertEqual(snapshot.nextEvent, .init(title: "Maths", startTimeLabel: time(of: now.addingTimeInterval(2 * 3600), locale: english)))
+        XCTAssertEqual(
+            snapshot.nextEvent,
+            .init(
+                title: "Maths",
+                startTimeLabel: time(of: now.addingTimeInterval(2 * 3600), locale: english),
+                startDate: now.addingTimeInterval(2 * 3600)
+            )
+        )
     }
 
     func test_inProgress_hasNoNextEvent_whenTheNextOneIsTomorrow() {
@@ -413,7 +420,14 @@ final class SnapshotComputationTests: XCTestCase {
             locale: french
         )
 
-        XCTAssertEqual(snapshot.nextEvent, .init(title: "Maths", startTimeLabel: time(of: now.addingTimeInterval(3600), locale: french)))
+        XCTAssertEqual(
+            snapshot.nextEvent,
+            .init(
+                title: "Maths",
+                startTimeLabel: time(of: now.addingTimeInterval(3600), locale: french),
+                startDate: now.addingTimeInterval(3600)
+            )
+        )
     }
 
     // MARK: - .onBreak
@@ -439,7 +453,14 @@ final class SnapshotComputationTests: XCTestCase {
         XCTAssertEqual(snapshot.remainingSeconds, 1800)
         XCTAssertEqual(snapshot.startTimeLabel, time(of: now.addingTimeInterval(-600), locale: english))
         XCTAssertEqual(snapshot.endTimeLabel, time(of: now.addingTimeInterval(30 * 60), locale: english))
-        XCTAssertEqual(snapshot.nextEvent, .init(title: "Maths", startTimeLabel: time(of: now.addingTimeInterval(30 * 60), locale: english)))
+        XCTAssertEqual(
+            snapshot.nextEvent,
+            .init(
+                title: "Maths",
+                startTimeLabel: time(of: now.addingTimeInterval(30 * 60), locale: english),
+                startDate: now.addingTimeInterval(30 * 60)
+            )
+        )
         XCTAssertNil(snapshot.joinURL)
     }
 
