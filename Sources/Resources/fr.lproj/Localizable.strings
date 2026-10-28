@@ -41,3 +41,5 @@
 "Upcoming" = "À venir";
 "Version %@ available" = "Version %@ disponible";
 "tomorrow %@" = "demain %@";
+"%@ · → %@ in %@" = "%@ · → %@ dans %@";
+"→ %@ in %@" = "→ %@ dans %@";

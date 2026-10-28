@@ -180,7 +180,7 @@ enum SnapshotBuilder {
             ? Localized.string("\(minutes)min", locale: locale)
             : Localized.string("\(hours)h \(minutes)min", locale: locale)
 
-        return EventProgressSnapshot(
+        var snapshot = EventProgressSnapshot(
             title: title,
             progress: 0,
             startTimeLabel: formattedTime(event.startDate, calendar: calendar, locale: locale),
@@ -192,6 +192,8 @@ enum SnapshotBuilder {
             tint: event.color,
             state: .upcomingToday
         )
+        snapshot.nextEvent = nextEvent(for: event, calendar: calendar, locale: locale)
+        return snapshot
     }
 
     /// Shaped like an event in progress — the gap is what the user is waiting

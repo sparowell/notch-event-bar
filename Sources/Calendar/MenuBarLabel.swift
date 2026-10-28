@@ -7,10 +7,39 @@ enum MenuBarLabel {
     static func text(
         for snapshot: EventProgressSnapshot,
         enabled: Bool,
-        locale: Locale = .current
+        locale: Locale = .current,
+        now: Date = Date()
     ) -> String? {
         guard enabled else { return nil }
-        return text(remainingSeconds: snapshot.remainingSeconds, locale: locale)
+
+        switch snapshot.state {
+        case .inProgress:
+            let remaining = text(remainingSeconds: snapshot.remainingSeconds, locale: locale)
+            guard let next = nextLabel(snapshot.nextEvent, now: now, locale: locale) else { return remaining }
+            guard let remaining else { return next }
+            return Localized.string("\(remaining) · \(next)", locale: locale)
+        case .onBreak, .upcomingToday:
+            return nextLabel(snapshot.nextEvent, now: now, locale: locale)
+        default:
+            return text(remainingSeconds: snapshot.remainingSeconds, locale: locale)
+        }
+    }
+
+    static let maximumTitleLength = 20
+
+    /// Trimmed, cut on grapheme boundaries so emoji are never split.
+    static func truncatedTitle(_ title: String) -> String {
+        let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmed.count > maximumTitleLength else { return trimmed }
+        return String(trimmed.prefix(maximumTitleLength)) + "…"
+    }
+
+    private static func nextLabel(_ next: EventProgressSnapshot.NextEvent?, now: Date, locale: Locale) -> String? {
+        guard let next,
+              let delta = text(remainingSeconds: Int(next.startDate.timeIntervalSince(now)), locale: locale)
+        else { return nil }
+        let title = truncatedTitle(next.title)
+        return Localized.string("→ \(title) in \(delta)", locale: locale)
     }
 
     static func text(remainingSeconds: Int?, locale: Locale = .current) -> String? {

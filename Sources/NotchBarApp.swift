@@ -53,6 +53,8 @@ struct MenuBarStatusLabel: View {
             HStack(spacing: 4) {
                 Image(systemName: "capsule.tophalf.filled")
                 Text(countdown)
+                    .lineLimit(1)
+                    .fixedSize()
             }
             .accessibilityElement(children: .ignore)
             .accessibilityLabel(Text("Remaining", bundle: Localized.resources))
