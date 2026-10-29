@@ -158,7 +158,12 @@ final class EventProgressModel: ObservableObject {
     }
 
     var menuBarText: String? {
-        MenuBarLabel.text(for: snapshot, enabled: preferences?.showsMenuBarCountdown ?? false, now: Date())
+        MenuBarLabel.text(
+            for: snapshot,
+            enabled: preferences?.showsMenuBarCountdown ?? false,
+            now: Date(),
+            titleWordLimit: preferences.flatMap { $0.limitsTitleWords ? $0.titleWordLimit : nil }
+        )
     }
 
     deinit {

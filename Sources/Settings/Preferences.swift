@@ -11,6 +11,8 @@ final class Preferences: ObservableObject {
         static let notifiesBeforeEvents = "notifiesBeforeEvents"
         static let showsRestingProgressLine = "showsRestingProgressLine"
         static let dayStartMinutes = "dayStartMinutes"
+        static let limitsTitleWords = "limitsTitleWords"
+        static let titleWordLimit = "titleWordLimit"
         static let legacySingleIdentifier = "selectedCalendarIdentifier"
         static let legacySelectedCalendarIDs = "selectedCalendarIDs"
         static let legacyShowsNoMeetingState = "showsNoMeetingState"
@@ -75,6 +77,31 @@ final class Preferences: ObservableObject {
         }
     }
 
+    /// On by default: the menu bar has little room, and a long title pushes
+    /// the countdown out of sight.
+    @Published var limitsTitleWords: Bool {
+        didSet { defaults.set(limitsTitleWords, forKey: Keys.limitsTitleWords) }
+    }
+
+    /// How many words of an event title the menu bar keeps before the `…`.
+    @Published var titleWordLimit: Int {
+        didSet {
+            let clamped = Self.clampedWordLimit(titleWordLimit)
+            if clamped != titleWordLimit {
+                titleWordLimit = clamped
+                return
+            }
+            defaults.set(titleWordLimit, forKey: Keys.titleWordLimit)
+        }
+    }
+
+    static let defaultTitleWordLimit = 3
+    static let titleWordLimitRange = 1...10
+
+    static func clampedWordLimit(_ words: Int) -> Int {
+        min(max(words, titleWordLimitRange.lowerBound), titleWordLimitRange.upperBound)
+    }
+
     static let defaultDayStartMinutes = 8 * 60
 
     static func clampedDayStart(_ minutes: Int) -> Int {
@@ -97,6 +124,10 @@ final class Preferences: ObservableObject {
         self.showsMenuBarProgressBar = Self.bool(in: defaults, forKey: Keys.showsMenuBarProgressBar, default: true)
         self.notifiesBeforeEvents = Self.bool(in: defaults, forKey: Keys.notifiesBeforeEvents, default: false)
         self.showsRestingProgressLine = Self.bool(in: defaults, forKey: Keys.showsRestingProgressLine, default: false)
+        self.limitsTitleWords = Self.bool(in: defaults, forKey: Keys.limitsTitleWords, default: true)
+        self.titleWordLimit = Self.clampedWordLimit(
+            Self.int(in: defaults, forKey: Keys.titleWordLimit, default: Self.defaultTitleWordLimit)
+        )
         self.dayStartMinutes = Self.clampedDayStart(
             Self.int(in: defaults, forKey: Keys.dayStartMinutes, default: Self.defaultDayStartMinutes)
         )

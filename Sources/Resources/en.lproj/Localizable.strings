@@ -46,3 +46,6 @@
 "%@ · → %@ in %@" = "%@ · → %@ in %@";
 "→ %@ in %@" = "→ %@ in %@";
 "in %@" = "in %@";
+
+"Shorten event titles in the menu bar" = "Shorten event titles in the menu bar";
+"Words to keep: %lld" = "Words to keep: %lld";

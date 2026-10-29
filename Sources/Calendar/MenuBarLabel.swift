@@ -8,18 +8,19 @@ enum MenuBarLabel {
         for snapshot: EventProgressSnapshot,
         enabled: Bool,
         locale: Locale = .current,
-        now: Date = Date()
+        now: Date = Date(),
+        titleWordLimit: Int? = nil
     ) -> String? {
         guard enabled else { return nil }
 
         switch snapshot.state {
         case .inProgress:
             let remaining = text(remainingSeconds: snapshot.remainingSeconds, locale: locale)
-            guard let next = nextLabel(snapshot.nextEvent, now: now, locale: locale) else { return remaining }
+            guard let next = nextLabel(snapshot.nextEvent, now: now, locale: locale, wordLimit: titleWordLimit) else { return remaining }
             guard let remaining else { return next }
             return Localized.string("\(remaining) · \(next)", locale: locale)
         case .onBreak, .upcomingToday:
-            return nextLabel(snapshot.nextEvent, now: now, locale: locale)
+            return nextLabel(snapshot.nextEvent, now: now, locale: locale, wordLimit: titleWordLimit)
         default:
             return text(remainingSeconds: snapshot.remainingSeconds, locale: locale)
         }
@@ -28,17 +29,27 @@ enum MenuBarLabel {
     static let maximumTitleLength = 20
 
     /// Trimmed, cut on grapheme boundaries so emoji are never split.
-    static func truncatedTitle(_ title: String) -> String {
-        let trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
+    /// With `wordLimit`, only that many whitespace-separated words are kept
+    /// (then `…`); the character cap still applies on top.
+    static func truncatedTitle(_ title: String, wordLimit: Int? = nil) -> String {
+        var trimmed = title.trimmingCharacters(in: .whitespacesAndNewlines)
+        if let wordLimit {
+            let words = trimmed.split(whereSeparator: \.isWhitespace)
+            if words.count > wordLimit {
+                trimmed = words.prefix(wordLimit).joined(separator: " ") + "…"
+            }
+        }
         guard trimmed.count > maximumTitleLength else { return trimmed }
         return String(trimmed.prefix(maximumTitleLength)) + "…"
     }
 
-    private static func nextLabel(_ next: EventProgressSnapshot.NextEvent?, now: Date, locale: Locale) -> String? {
+    private static func nextLabel(
+        _ next: EventProgressSnapshot.NextEvent?, now: Date, locale: Locale, wordLimit: Int?
+    ) -> String? {
         guard let next,
               let delta = text(remainingSeconds: Int(next.startDate.timeIntervalSince(now)), locale: locale)
         else { return nil }
-        let title = truncatedTitle(next.title)
+        let title = truncatedTitle(next.title, wordLimit: wordLimit)
         return Localized.string("→ \(title) in \(delta)", locale: locale)
     }
 

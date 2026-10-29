@@ -70,6 +70,17 @@ struct SettingsView: View {
 
             settingRow("Show countdown in the menu bar", isOn: $preferences.showsMenuBarCountdown)
 
+            settingRow("Shorten event titles in the menu bar", isOn: $preferences.limitsTitleWords)
+
+            if preferences.limitsTitleWords {
+                Stepper(
+                    value: $preferences.titleWordLimit,
+                    in: Preferences.titleWordLimitRange
+                ) {
+                    Text("Words to keep: \(preferences.titleWordLimit)", bundle: Localized.resources)
+                }
+            }
+
             settingRow("Show progress bar in the menu bar", isOn: $preferences.showsMenuBarProgressBar)
 
             settingRow("Notify me 5 minutes before an event starts or ends", isOn: $preferences.notifiesBeforeEvents)

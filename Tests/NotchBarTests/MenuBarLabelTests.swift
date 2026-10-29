@@ -202,3 +202,28 @@ final class MenuBarLabelTests: XCTestCase {
         XCTAssertEqual(label(s), "→ B in 3h")
     }
 }
+
+@MainActor
+final class TitleWordLimitTests: XCTestCase {
+    func test_keepsFirstWordsAndAddsEllipsis() {
+        XCTAssertEqual(MenuBarLabel.truncatedTitle("Weekly sync with design team", wordLimit: 3), "Weekly sync with…")
+    }
+
+    func test_shortTitleIsUntouched() {
+        XCTAssertEqual(MenuBarLabel.truncatedTitle("Standup  now", wordLimit: 3), "Standup  now")
+    }
+
+    func test_noLimit_keepsAllWords() {
+        XCTAssertEqual(MenuBarLabel.truncatedTitle("a b c d e"), "a b c d e")
+    }
+
+    func test_characterCapStillApplies() {
+        let result = MenuBarLabel.truncatedTitle("Internationalization Documentation review", wordLimit: 2)
+        XCTAssertLessThanOrEqual(result.count, MenuBarLabel.maximumTitleLength + 1)
+    }
+
+    func test_limitIsClamped() {
+        XCTAssertEqual(Preferences.clampedWordLimit(0), 1)
+        XCTAssertEqual(Preferences.clampedWordLimit(99), 10)
+    }
+}
