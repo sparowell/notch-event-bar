@@ -82,12 +82,22 @@ struct TimeRangeView: View {
 
 struct MetricLabel: View {
     let titleKey: LocalizedStringKey
+    /// Shown instead of the word when the emoji setting is on.
+    let emoji: String
+    let usesEmoji: Bool
     let value: String
 
     var body: some View {
         HStack(spacing: 7) {
-            Text(titleKey, bundle: Localized.resources)
-                .foregroundStyle(.white.opacity(0.42))
+            Group {
+                if usesEmoji {
+                    Text(verbatim: emoji)
+                        .accessibilityLabel(Text(titleKey, bundle: Localized.resources))
+                } else {
+                    Text(titleKey, bundle: Localized.resources)
+                        .foregroundStyle(.white.opacity(0.42))
+                }
+            }
             Text(value.isEmpty ? "--:--:--" : value)
                 .monospacedDigit()
                 .foregroundStyle(.white.opacity(0.78))

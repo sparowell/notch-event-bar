@@ -117,3 +117,23 @@ final class PanelLayoutJoinTests: XCTestCase {
         )
     }
 }
+
+final class PanelLayoutUpNextTests: XCTestCase {
+    private func snapshot(gapSeconds: Int) -> EventProgressSnapshot {
+        var s = EventProgressSnapshot(
+            title: "T", progress: 0.5, startTimeLabel: "", endTimeLabel: "", elapsedLabel: "",
+            remainingLabel: "", statusLabel: "", secondaryMessage: nil, tint: .blue, state: .inProgress
+        )
+        s.followingEvent = .init(title: "Next", gapSeconds: gapSeconds)
+        return s
+    }
+
+    func test_backToBack_isUpNext() {
+        XCTAssertEqual(PanelLayout.thirdField(for: snapshot(gapSeconds: 0)), .upNext(title: "Next"))
+        XCTAssertEqual(PanelLayout.thirdField(for: snapshot(gapSeconds: 59)), .upNext(title: "Next"))
+    }
+
+    func test_aGap_isStillNamed() {
+        XCTAssertEqual(PanelLayout.thirdField(for: snapshot(gapSeconds: 3600)), .gap(minutes: 60, title: "Next"))
+    }
+}

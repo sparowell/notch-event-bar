@@ -11,6 +11,7 @@ final class Preferences: ObservableObject {
         static let notifiesBeforeEvents = "notifiesBeforeEvents"
         static let showsRestingProgressLine = "showsRestingProgressLine"
         static let dayStartMinutes = "dayStartMinutes"
+        static let usesEmojiLabels = "usesEmojiLabels"
         static let limitsTitleWords = "limitsTitleWords"
         static let titleWordLimit = "titleWordLimit"
         static let legacySingleIdentifier = "selectedCalendarIdentifier"
@@ -77,6 +78,11 @@ final class Preferences: ObservableObject {
         }
     }
 
+    /// Off by default: ⏱ and ⏳ stand in for the words Elapsed and Remaining.
+    @Published var usesEmojiLabels: Bool {
+        didSet { defaults.set(usesEmojiLabels, forKey: Keys.usesEmojiLabels) }
+    }
+
     /// On by default: the menu bar has little room, and a long title pushes
     /// the countdown out of sight.
     @Published var limitsTitleWords: Bool {
@@ -124,6 +130,7 @@ final class Preferences: ObservableObject {
         self.showsMenuBarProgressBar = Self.bool(in: defaults, forKey: Keys.showsMenuBarProgressBar, default: true)
         self.notifiesBeforeEvents = Self.bool(in: defaults, forKey: Keys.notifiesBeforeEvents, default: false)
         self.showsRestingProgressLine = Self.bool(in: defaults, forKey: Keys.showsRestingProgressLine, default: false)
+        self.usesEmojiLabels = Self.bool(in: defaults, forKey: Keys.usesEmojiLabels, default: false)
         self.limitsTitleWords = Self.bool(in: defaults, forKey: Keys.limitsTitleWords, default: true)
         self.titleWordLimit = Self.clampedWordLimit(
             Self.int(in: defaults, forKey: Keys.titleWordLimit, default: Self.defaultTitleWordLimit)

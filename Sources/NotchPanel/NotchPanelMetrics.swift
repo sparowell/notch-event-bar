@@ -73,6 +73,8 @@ enum PanelLayout {
     enum ThirdField: Equatable {
         /// `1h → Title`: gap to the event following a meeting.
         case gap(minutes: Int, title: String)
+        /// `Up next → Title`: the next event starts straight away, no gap to name.
+        case upNext(title: String)
         /// `→ Title`: a block (or break) is running, no time shown.
         case arrow(title: String)
     }
@@ -83,6 +85,9 @@ enum PanelLayout {
             guard let following = snapshot.followingEvent else { return nil }
             if !snapshot.nestedMeetings.isEmpty {
                 return .arrow(title: following.title)
+            }
+            if following.gapSeconds < 60 {
+                return .upNext(title: following.title)
             }
             return .gap(minutes: following.gapSeconds / 60, title: following.title)
         case .onBreak:

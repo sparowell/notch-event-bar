@@ -81,6 +81,8 @@ struct SettingsView: View {
                 }
             }
 
+            settingRow("Use emoji for Elapsed and Remaining", isOn: $preferences.usesEmojiLabels)
+
             settingRow("Show progress bar in the menu bar", isOn: $preferences.showsMenuBarProgressBar)
 
             settingRow("Notify me 5 minutes before an event starts or ends", isOn: $preferences.notifiesBeforeEvents)

@@ -84,7 +84,8 @@ struct NotchContentView: View {
             case .inProgress, .onBreak:
                 InProgressContent(
                     snapshot: snapshot,
-                    isAnimating: progressModel.isHoverVisible && shimmerEnabled
+                    isAnimating: progressModel.isHoverVisible && shimmerEnabled,
+                    usesEmojiLabels: progressModel.usesEmojiLabels
                 )
             case .startingSoon, .upcomingToday, .upcomingLater, .emptyToday, .noCalendar, .accessRevoked:
                 SecondaryContent(
@@ -107,6 +108,7 @@ struct NotchContentView: View {
 private struct InProgressContent: View {
     let snapshot: EventProgressSnapshot
     let isAnimating: Bool
+    let usesEmojiLabels: Bool
 
     var body: some View {
         let gap = PanelLayout.hasUpcomingNestedMeeting(snapshot) ? PanelLayout.captionGap : PanelLayout.plainGap
@@ -145,10 +147,10 @@ private struct InProgressContent: View {
                 .padding(.top, gap)
 
             HStack(alignment: .top, spacing: 16) {
-                MetricLabel(titleKey: "Elapsed", value: snapshot.elapsedLabel)
+                MetricLabel(titleKey: "Elapsed", emoji: "⏱", usesEmoji: usesEmojiLabels, value: snapshot.elapsedLabel)
                     .fixedSize()
 
-                MetricLabel(titleKey: "Remaining", value: snapshot.remainingLabel)
+                MetricLabel(titleKey: "Remaining", emoji: "⏳", usesEmoji: usesEmojiLabels, value: snapshot.remainingLabel)
                     .fixedSize()
 
                 Spacer(minLength: 0)
@@ -180,6 +182,10 @@ private struct ThirdField: View {
             switch field {
             case let .gap(minutes, title):
                 return Text(DurationLabel.short(minutes: minutes)).foregroundColor(main)
+                    + Text(verbatim: " → ").foregroundColor(dim)
+                    + Text(verbatim: title).foregroundColor(main)
+            case let .upNext(title):
+                return Text("Up next", bundle: Localized.resources).foregroundColor(main)
                     + Text(verbatim: " → ").foregroundColor(dim)
                     + Text(verbatim: title).foregroundColor(main)
             case let .arrow(title):
