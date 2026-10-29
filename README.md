@@ -234,3 +234,22 @@ To rehearse the rewrite without pushing anything: `scripts/bump-cask.sh 0.3.0 "$
 ## License
 
 NotchBar is released under the [MIT License](LICENSE).
+
+## Personal build (fork)
+
+This fork (`personal` branch) adds three things on top of upstream:
+
+- the menu bar shows the remaining time **and** the next event (`23 min · → Standup in 35 min`; titles cut at 20 characters);
+- a mini progress bar in the menu bar replaces the icon while an event or a break is running (toggle in settings);
+- breaks (free windows) run from a configurable **Start of day** (default 08:00) to the first event, and any gap between events is a break (the 2 h cap is gone).
+
+Build and install from source (a local build carries no quarantine flag):
+
+```bash
+git pull
+scripts/package.sh
+pkill -x NotchBar; rm -rf /Applications/NotchBar.app
+cp -R dist/NotchBar.app /Applications/ && open /Applications/NotchBar.app
+```
+
+Every rebuild changes the ad-hoc signature, so macOS may ask for Calendar access again.
