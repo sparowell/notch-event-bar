@@ -98,28 +98,19 @@ enum NestedMeetingsGeometry {
 /// the bar's top and bottom.
 struct NestedMeetingsBar: View {
     static let barHeight: CGFloat = 13
-    static let capsuleHeight: CGFloat = 23
-    /// A meeting that is over takes less room: it only marks a busy slot.
-    static let pastCapsuleHeight: CGFloat = 17
     static let tickWidth: CGFloat = 1.5
     static let capsuleBorderWidth: CGFloat = 1.5
     /// Space between a capsule's top and the label's bottom.
     static let labelSpacing: CGFloat = 3
     static let labelBoxHeight: CGFloat = 30
 
-    // Colours are constants so the amber can be swapped for the meeting's
-    // calendar colour later without touching the drawing.
-    static let amber = Color(red: 0xF0 / 255, green: 0xA2 / 255, blue: 0x3C / 255)
-    static let futureFill = amber.opacity(0.32)
-    static let futureBorder = amber
-    static let pastFill = Color(red: 214 / 255, green: 178 / 255, blue: 128 / 255).opacity(0.62)
-    static let pastBorder = Color(red: 214 / 255, green: 178 / 255, blue: 128 / 255).opacity(0.9)
     static let tickColor = Color.white.opacity(0.22)
-    static let labelTitleColor = amber
     static let labelCountdownColor = Color.white.opacity(0.75)
 
     let tickFractions: [Double]
     let meetings: [EventProgressSnapshot.NestedMeeting]
+    var upcoming: CapsuleAppearance = .upcomingDefault
+    var past: CapsuleAppearance = .pastDefault
 
     var body: some View {
         GeometryReader { geo in
@@ -143,7 +134,7 @@ struct NestedMeetingsBar: View {
             }
             let labels = NestedMeetingsGeometry.resolveOverlaps(raw)
             let nearest = NestedMeetingsGeometry.nearestFutureIndex(meetings)
-            let overhang = (Self.capsuleHeight - geo.size.height) / 2
+            let overhang = (CGFloat(upcoming.clampedHeight) - geo.size.height) / 2
 
             ZStack(alignment: .topLeading) {
                 ForEach(Array(tickFractions.enumerated()), id: \.offset) { _, fraction in
@@ -155,13 +146,14 @@ struct NestedMeetingsBar: View {
 
                 ForEach(meetings.indices, id: \.self) { i in
                     let meeting = meetings[i]
-                    let capsuleHeight = meeting.isPast ? Self.pastCapsuleHeight : Self.capsuleHeight
+                    let style = meeting.isPast ? past : upcoming
+                    let capsuleHeight = CGFloat(style.clampedHeight)
 
                     Capsule()
-                        .fill(meeting.isPast ? Self.pastFill : Self.futureFill)
+                        .fill(style.fill.color)
                         .overlay(
                             Capsule().strokeBorder(
-                                meeting.isPast ? Self.pastBorder : Self.futureBorder,
+                                style.borderColor,
                                 lineWidth: Self.capsuleBorderWidth
                             )
                         )
@@ -192,7 +184,7 @@ struct NestedMeetingsBar: View {
         VStack(alignment: anchor == .leading ? .leading : .trailing, spacing: 1) {
             Text(verbatim: meeting.title)
                 .font(.system(size: 11, weight: .semibold, design: .rounded))
-                .foregroundStyle(Self.labelTitleColor)
+                .foregroundStyle(upcoming.labelColor)
                 .lineLimit(1)
                 .truncationMode(.tail)
 

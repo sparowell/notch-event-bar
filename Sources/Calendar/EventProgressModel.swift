@@ -157,6 +157,9 @@ final class EventProgressModel: ObservableObject {
         MenuBarProgressImage.fill(for: snapshot, enabled: preferences?.showsMenuBarProgressBar ?? false)
     }
 
+    var upcomingCapsule: CapsuleAppearance { preferences?.upcomingCapsule ?? .upcomingDefault }
+    var pastCapsule: CapsuleAppearance { preferences?.pastCapsule ?? .pastDefault }
+
     var usesEmojiLabels: Bool {
         preferences?.usesEmojiLabels ?? false
     }

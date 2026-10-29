@@ -11,6 +11,8 @@ final class Preferences: ObservableObject {
         static let notifiesBeforeEvents = "notifiesBeforeEvents"
         static let showsRestingProgressLine = "showsRestingProgressLine"
         static let dayStartMinutes = "dayStartMinutes"
+        static let upcomingCapsule = "upcomingCapsuleAppearance"
+        static let pastCapsule = "pastCapsuleAppearance"
         static let usesEmojiLabels = "usesEmojiLabels"
         static let limitsTitleWords = "limitsTitleWords"
         static let titleWordLimit = "titleWordLimit"
@@ -78,6 +80,31 @@ final class Preferences: ObservableObject {
         }
     }
 
+    @Published var upcomingCapsule: CapsuleAppearance {
+        didSet { Self.store(upcomingCapsule, in: defaults, forKey: Keys.upcomingCapsule) }
+    }
+
+    @Published var pastCapsule: CapsuleAppearance {
+        didSet { Self.store(pastCapsule, in: defaults, forKey: Keys.pastCapsule) }
+    }
+
+    func resetCapsuleAppearance() {
+        upcomingCapsule = .upcomingDefault
+        pastCapsule = .pastDefault
+    }
+
+    private static func store(_ value: CapsuleAppearance, in defaults: UserDefaults, forKey key: String) {
+        defaults.set(try? JSONEncoder().encode(value), forKey: key)
+    }
+
+    private static func loadAppearance(
+        in defaults: UserDefaults, forKey key: String, default fallback: CapsuleAppearance
+    ) -> CapsuleAppearance {
+        guard let data = defaults.data(forKey: key),
+              let value = try? JSONDecoder().decode(CapsuleAppearance.self, from: data) else { return fallback }
+        return value
+    }
+
     /// Off by default: ⏱ and ⏳ stand in for the words Elapsed and Remaining.
     @Published var usesEmojiLabels: Bool {
         didSet { defaults.set(usesEmojiLabels, forKey: Keys.usesEmojiLabels) }
@@ -130,6 +157,8 @@ final class Preferences: ObservableObject {
         self.showsMenuBarProgressBar = Self.bool(in: defaults, forKey: Keys.showsMenuBarProgressBar, default: true)
         self.notifiesBeforeEvents = Self.bool(in: defaults, forKey: Keys.notifiesBeforeEvents, default: false)
         self.showsRestingProgressLine = Self.bool(in: defaults, forKey: Keys.showsRestingProgressLine, default: false)
+        self.upcomingCapsule = Self.loadAppearance(in: defaults, forKey: Keys.upcomingCapsule, default: .upcomingDefault)
+        self.pastCapsule = Self.loadAppearance(in: defaults, forKey: Keys.pastCapsule, default: .pastDefault)
         self.usesEmojiLabels = Self.bool(in: defaults, forKey: Keys.usesEmojiLabels, default: false)
         self.limitsTitleWords = Self.bool(in: defaults, forKey: Keys.limitsTitleWords, default: true)
         self.titleWordLimit = Self.clampedWordLimit(

@@ -83,6 +83,8 @@ struct SettingsView: View {
 
             settingRow("Use emoji for Elapsed and Remaining", isOn: $preferences.usesEmojiLabels)
 
+            capsuleSettings
+
             settingRow("Show progress bar in the menu bar", isOn: $preferences.showsMenuBarProgressBar)
 
             settingRow("Notify me 5 minutes before an event starts or ends", isOn: $preferences.notifiesBeforeEvents)
@@ -167,6 +169,65 @@ struct SettingsView: View {
             } label: {
                 Text("Open System Settings", bundle: Localized.resources)
             }
+        }
+    }
+
+    private var capsuleSettings: some View {
+        DisclosureGroup {
+            VStack(alignment: .leading, spacing: 8) {
+                capsuleControls("Upcoming meetings", appearance: $preferences.upcomingCapsule, hasLabel: true)
+                capsuleControls("Past meetings", appearance: $preferences.pastCapsule, hasLabel: false)
+
+                Button {
+                    preferences.resetCapsuleAppearance()
+                } label: {
+                    Text("Reset to defaults", bundle: Localized.resources)
+                }
+            }
+            .padding(.top, 6)
+        } label: {
+            Text("Meeting capsules", bundle: Localized.resources)
+        }
+    }
+
+    private func capsuleControls(
+        _ title: LocalizedStringKey, appearance: Binding<CapsuleAppearance>, hasLabel: Bool
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(title, bundle: Localized.resources)
+                .font(.subheadline.weight(.semibold))
+
+            colorRow("Color and opacity", color: appearance.fill, opacity: true)
+
+            HStack(spacing: 8) {
+                Text("Thickness", bundle: Localized.resources)
+                Slider(value: appearance.height, in: CapsuleAppearance.heightRange)
+            }
+
+            settingRow("Custom border color", isOn: appearance.usesCustomBorder)
+            if appearance.wrappedValue.usesCustomBorder {
+                colorRow("Border color", color: appearance.border, opacity: true)
+            }
+
+            if hasLabel {
+                settingRow("Caption follows capsule color", isOn: appearance.labelFollowsFill)
+                if !appearance.wrappedValue.labelFollowsFill {
+                    colorRow("Caption color", color: appearance.label, opacity: false)
+                }
+            }
+        }
+    }
+
+    private func colorRow(_ title: LocalizedStringKey, color: Binding<RGBAColor>, opacity: Bool) -> some View {
+        HStack(spacing: 8) {
+            Text(title, bundle: Localized.resources)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            ColorPicker(
+                "",
+                selection: Binding(get: { color.wrappedValue.color }, set: { color.wrappedValue = RGBAColor($0) }),
+                supportsOpacity: opacity
+            )
+            .labelsHidden()
         }
     }
 

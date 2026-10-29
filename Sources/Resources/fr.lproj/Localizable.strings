@@ -51,3 +51,13 @@
 "Words to keep: %lld" = "Mots conservés : %lld";
 "Use emoji for Elapsed and Remaining" = "Use emoji for Elapsed and Remaining";
 "Up next" = "Up next";
+"Meeting capsules" = "Meeting capsules";
+"Upcoming meetings" = "Upcoming meetings";
+"Past meetings" = "Past meetings";
+"Color and opacity" = "Color and opacity";
+"Thickness" = "Thickness";
+"Custom border color" = "Custom border color";
+"Border color" = "Border color";
+"Caption follows capsule color" = "Caption follows capsule color";
+"Caption color" = "Caption color";
+"Reset to defaults" = "Reset to defaults";

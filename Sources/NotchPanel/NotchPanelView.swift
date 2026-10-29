@@ -85,7 +85,9 @@ struct NotchContentView: View {
                 InProgressContent(
                     snapshot: snapshot,
                     isAnimating: progressModel.isHoverVisible && shimmerEnabled,
-                    usesEmojiLabels: progressModel.usesEmojiLabels
+                    usesEmojiLabels: progressModel.usesEmojiLabels,
+                    upcomingCapsule: progressModel.upcomingCapsule,
+                    pastCapsule: progressModel.pastCapsule
                 )
             case .startingSoon, .upcomingToday, .upcomingLater, .emptyToday, .noCalendar, .accessRevoked:
                 SecondaryContent(
@@ -109,6 +111,8 @@ private struct InProgressContent: View {
     let snapshot: EventProgressSnapshot
     let isAnimating: Bool
     let usesEmojiLabels: Bool
+    let upcomingCapsule: CapsuleAppearance
+    let pastCapsule: CapsuleAppearance
 
     var body: some View {
         let gap = PanelLayout.hasUpcomingNestedMeeting(snapshot) ? PanelLayout.captionGap : PanelLayout.plainGap
@@ -142,7 +146,12 @@ private struct InProgressContent: View {
                 .frame(maxWidth: .infinity)
                 .frame(height: PanelLayout.barHeight)
                 .overlay {
-                    NestedMeetingsBar(tickFractions: snapshot.tickFractions, meetings: snapshot.nestedMeetings)
+                    NestedMeetingsBar(
+                        tickFractions: snapshot.tickFractions,
+                        meetings: snapshot.nestedMeetings,
+                        upcoming: upcomingCapsule,
+                        past: pastCapsule
+                    )
                 }
                 .padding(.top, gap)
 
