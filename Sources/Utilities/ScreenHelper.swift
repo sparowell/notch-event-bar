@@ -2,13 +2,28 @@ import AppKit
 
 enum ScreenHelper {
     // Deployed (hover-expanded) panel size, 25% smaller than the original 640×190.
-    static let openNotchSize = CGSize(width: 480, height: 143)
-    static let panelWidth: CGFloat = openNotchSize.width
-    static let panelHeight: CGFloat = openNotchSize.height
+    static let panelWidth: CGFloat = 480
+    /// Space above the content on a screen without a camera cut-out.
+    static let plainContentTopInset: CGFloat = 28
+    /// Clearance kept under the cut-out before the content starts.
+    static let notchContentGap: CGFloat = 8
     static let panelTopBleed: CGFloat = 2
     private static let closedNotchFallbackSize = CGSize(width: 185, height: 32)
 
-    static func panelRect() -> NSRect {
+    /// Where the content starts: below the camera cut-out when there is one.
+    static func contentTopInset() -> CGFloat {
+        contentTopInset(safeAreaTop: preferredScreen().safeAreaInsets.top)
+    }
+
+    static func contentTopInset(safeAreaTop: CGFloat) -> CGFloat {
+        safeAreaTop > 0 ? safeAreaTop + notchContentGap : plainContentTopInset
+    }
+
+    static func panelHeight(for snapshot: EventProgressSnapshot) -> CGFloat {
+        PanelLayout.height(for: snapshot, topInset: contentTopInset())
+    }
+
+    static func panelRect(height panelHeight: CGFloat) -> NSRect {
         let screenFrame = preferredScreen().frame
         return NSRect(
             x: screenFrame.midX - panelWidth / 2,
