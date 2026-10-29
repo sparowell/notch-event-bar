@@ -1,3 +1,5 @@
+> **Актуально с 2026-10-30 (конец третьей сессии).** Приложение переименовано: **Notch Event Bar**, идентификатор `com.sparowell.NotchEventBar`, файл `/Applications/NotchEventBar.app`, репозиторий `sparowell/notch-event-bar` (локально по-прежнему `~/Documents/GitHub/Notchapp`), основная ветка `main` (`personal` совпадает с ней). Модуль и папка тестов: `NotchEventBar`, `Tests/NotchEventBarTests`, `Sources/NotchEventBarApp.swift`. Релиз `v0.5.0` опубликован вручную (dmg собран локально `scripts/package.sh 0.5.0 1`), Actions в форке не включены. Ниже старые названия NotchBar оставлены как история.
+
 # NotchBar: ТЗ на реализацию
 
 Все решения согласованы 2026-10-30, перед реализацией ничего заново не обсуждаем. Карточка проекта в волте: `SecondBrain/25_Pet_Projects/Статус-бар календаря (NotchBar)/NotchBar — доработка под себя.md`. Макеты: `tasks/mockups.html` (открыть в браузере) или артефакт https://claude.ai/artifact/UsLLrM99E9vj8gSB9wdBjq (приватный). Сессия открывается в этом репозитории.

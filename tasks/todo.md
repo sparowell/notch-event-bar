@@ -1,3 +1,5 @@
+> **Актуально с 2026-10-30 (конец третьей сессии).** Приложение переименовано: **Notch Event Bar**, идентификатор `com.sparowell.NotchEventBar`, файл `/Applications/NotchEventBar.app`, репозиторий `sparowell/notch-event-bar` (локально по-прежнему `~/Documents/GitHub/Notchapp`), основная ветка `main` (`personal` совпадает с ней). Модуль и папка тестов: `NotchEventBar`, `Tests/NotchEventBarTests`, `Sources/NotchEventBarApp.swift`. Релиз `v0.5.0` опубликован вручную (dmg собран локально `scripts/package.sh 0.5.0 1`), Actions в форке не включены. Ниже старые названия NotchBar оставлены как история.
+
 # Personal build: NotchBar
 
 - [x] Fork, branch `personal`, baseline build + 163 tests green
@@ -50,3 +52,14 @@
 - [ ] `.github/workflows/ci.yml`: job `cask-bump` ходит в чужой `Periicles/homebrew-tap`; убрать вместе с `scripts/bump-cask.sh`, если пользователь согласен
 - [ ] Плавная анимация смены высоты шторки (сейчас мгновенно)
 - [ ] Решить по скриншотам: ширина нижней строки (Elapsed + Remaining + 150 pt впритык), высота шторки в состояниях с одним сообщением (сейчас `topInset + 50 + 22`, раньше 143)
+
+## Review: переименование и релиз 2026-10-30
+
+- [x] Переименование в Notch Event Bar (`com.sparowell.NotchEventBar`), убраны иконка оригинала, сайт `docs/`, `pages.yml`, `bump-cask.sh`, job `cask-bump`; новые README и CHANGELOG; в `LICENSE` добавлена строка `Copyright (c) 2026 sparowell` над строкой Periicles, копия лицензии внутри приложения (`Resources/LICENSE.txt`)
+- [x] Репозиторий переименован в `sparowell/notch-event-bar`, `main` подвинут на коммит `86bb453` (fast-forward), старое NotchBar.app и его контейнер удалены, настройки перенесены в контейнер нового приложения
+- [x] Релиз `v0.5.0` с `NotchEventBar.dmg`, 239 тестов зелёные
+- [ ] Включить Actions в форке кнопкой на вкладке Actions (сейчас запуск по тегу не срабатывает)
+- [ ] Иконка (будет своя, нужен промпт для генерации), потом вернуть шаг с иконкой в `package.sh`
+- [ ] Включить «Launch at login» в новом приложении, убрать старый пункт из «Объектов входа»
+- [ ] Живая проверка: Join, список календарей из меню, color picker в окне меню
+- [ ] Остаются открытыми прежние пункты: анимация высоты шторки, ширина нижней строки
