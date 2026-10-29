@@ -124,7 +124,10 @@ private struct InProgressContent: View {
             VStack(alignment: .leading, spacing: 12) {
                 AnimatedProgressBar(progress: snapshot.progress, tint: snapshot.tint, isAnimating: isAnimating)
                 .frame(maxWidth: .infinity)
-                .frame(height: 13)
+                .frame(height: NestedMeetingsBar.barHeight)
+                .overlay {
+                    NestedMeetingsBar(tickFractions: snapshot.tickFractions, meetings: snapshot.nestedMeetings)
+                }
 
                 HStack(spacing: 8) {
                     MetricLabel(titleKey: "Elapsed", value: snapshot.elapsedLabel)

@@ -45,3 +45,4 @@
 "tomorrow %@" = "demain %@";
 "%@ · → %@ in %@" = "%@ · → %@ dans %@";
 "→ %@ in %@" = "→ %@ dans %@";
+"in %@" = "dans %@";
