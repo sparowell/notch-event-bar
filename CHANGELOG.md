@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.1
+
+- App icon.
+
 ## 0.5.0
 
 First release of Notch Event Bar, a personal fork reworked from NotchBar by Periicles (MIT, see `LICENSE`).

@@ -33,8 +33,11 @@ echo "==> Assembling $APP_NAME.app"
 cp "$BIN_DIR/$APP_NAME"                    "$CONTENTS/MacOS/$APP_NAME"
 cp -R "$BIN_DIR/${APP_NAME}_${APP_NAME}.bundle" "$CONTENTS/Resources/"
 cp "LICENSE"                               "$CONTENTS/Resources/LICENSE.txt"
+cp "Supporting/Icon/$APP_NAME.icns"        "$CONTENTS/Resources/$APP_NAME.icns"
 cp "Supporting/Info.plist"                 "$CONTENTS/Info.plist"
 /usr/libexec/PlistBuddy -c "Set :CFBundleExecutable $APP_NAME" "$CONTENTS/Info.plist"
+/usr/libexec/PlistBuddy -c "Add :CFBundleIconFile string $APP_NAME" "$CONTENTS/Info.plist" 2>/dev/null \
+  || /usr/libexec/PlistBuddy -c "Set :CFBundleIconFile $APP_NAME" "$CONTENTS/Info.plist"
 
 if [ -n "$SHORT_VERSION" ]; then
   echo "==> Setting version $SHORT_VERSION"
