@@ -112,8 +112,8 @@ struct NestedMeetingsBar: View {
     static let amber = Color(red: 0xF0 / 255, green: 0xA2 / 255, blue: 0x3C / 255)
     static let futureFill = amber.opacity(0.32)
     static let futureBorder = amber
-    static let pastFill = Color(red: 214 / 255, green: 178 / 255, blue: 128 / 255).opacity(0.42)
-    static let pastBorder = Color(red: 214 / 255, green: 178 / 255, blue: 128 / 255).opacity(0.6)
+    static let pastFill = Color(red: 214 / 255, green: 178 / 255, blue: 128 / 255).opacity(0.62)
+    static let pastBorder = Color(red: 214 / 255, green: 178 / 255, blue: 128 / 255).opacity(0.9)
     static let tickColor = Color.white.opacity(0.22)
     static let labelTitleColor = amber
     static let labelCountdownColor = Color.white.opacity(0.75)
