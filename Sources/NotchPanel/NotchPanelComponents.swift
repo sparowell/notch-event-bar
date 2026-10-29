@@ -56,14 +56,24 @@ struct AnimatedProgressBar: View {
 struct TimeRangeView: View {
     let start: String
     let end: String
+    /// `30 min`, shown muted after the range; empty to leave it out.
+    var duration = ""
 
     var body: some View {
-        HStack(spacing: 8) {
-            Text(start)
-            Text("-")
-                .foregroundStyle(.white.opacity(0.38))
-            Text(end)
+        HStack(spacing: 6) {
+            HStack(spacing: 8) {
+                Text(start)
+                Text(verbatim: "–")
+                    .foregroundStyle(.white.opacity(0.38))
+                Text(end)
+            }
+            if !duration.isEmpty {
+                Text(verbatim: "(\(duration))")
+                    .fontWeight(.medium)
+                    .foregroundStyle(.white.opacity(0.5))
+            }
         }
+        .fixedSize()
         .font(.system(size: 15, weight: .semibold, design: .rounded))
         .monospacedDigit()
         .foregroundStyle(.white.opacity(0.78))

@@ -1,4 +1,5 @@
 import AppKit
+import Combine
 import SwiftUI
 
 @MainActor
@@ -12,6 +13,7 @@ final class NotchPanelController: NSObject {
     private let panel: NotchPanelWindow
     private let sensorPanel: NotchPanelWindow
     private var hostingView: NSHostingView<NotchPanelView>!
+    private var heightObserver: AnyCancellable?
     private let settingsPopover = NSPopover()
     private lazy var settingsContentController: NSHostingController<SettingsView> = {
         // The popover follows the view instead of a hard-coded size: every new
@@ -47,7 +49,7 @@ final class NotchPanelController: NSObject {
         self.updateChecker = updateChecker
         self.notifier = notifier
 
-        let contentRect = ScreenHelper.panelRect()
+        let contentRect = ScreenHelper.panelRect(height: ScreenHelper.panelHeight(for: progressModel.snapshot))
         panel = NotchPanelWindow(
             contentRect: contentRect,
             styleMask: [.borderless, .nonactivatingPanel],
@@ -77,6 +79,13 @@ final class NotchPanelController: NSObject {
         configureSensorPanel()
         installObservers()
         refreshLayout()
+        // The open panel is as tall as the snapshot's state needs; keep the
+        // window (and with it the hover area) the same size.
+        heightObserver = progressModel.$snapshot
+            .map { ScreenHelper.panelHeight(for: $0) }
+            .removeDuplicates()
+            // $snapshot publishes before the value is stored, so use the one passed in.
+            .sink { [weak self] height in self?.refreshLayout(height: height) }
         panel.orderFrontRegardless()
         sensorPanel.orderFrontRegardless()
     }
@@ -153,8 +162,10 @@ final class NotchPanelController: NSObject {
         }
     }
 
-    private func refreshLayout() {
-        let panelRect = ScreenHelper.panelRect()
+    private func refreshLayout(height: CGFloat? = nil) {
+        let panelRect = ScreenHelper.panelRect(
+            height: height ?? ScreenHelper.panelHeight(for: progressModel.snapshot)
+        )
         let sensorRect = ScreenHelper.sensorRect()
 
         panel.setFrame(panelRect, display: true)
