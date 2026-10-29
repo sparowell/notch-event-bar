@@ -66,7 +66,7 @@ enum PanelLayout {
     }
 
     static func hasJoinRow(_ snapshot: EventProgressSnapshot) -> Bool {
-        isRunningState(snapshot) && snapshot.joinURL != nil
+        (isRunningState(snapshot) || snapshot.state == .startingSoon) && snapshot.joinURL != nil
     }
 
     /// What the third bottom field says, or `nil` to hide it.
@@ -99,7 +99,8 @@ enum PanelLayout {
     static func height(for snapshot: EventProgressSnapshot, topInset: CGFloat) -> CGFloat {
         guard isRunningState(snapshot) else {
             let extra = snapshot.allDayMessage == nil ? 0 : secondaryAllDayExtra
-            return topInset + secondaryContentHeight + extra + bottomPadding
+            let join = hasJoinRow(snapshot) ? joinRowHeight : 0
+            return topInset + secondaryContentHeight + extra + join + bottomPadding
         }
         let gap = hasUpcomingNestedMeeting(snapshot) ? captionGap : plainGap
         let join = hasJoinRow(snapshot) ? joinRowHeight : 0

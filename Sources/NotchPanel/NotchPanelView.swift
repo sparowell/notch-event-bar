@@ -96,6 +96,9 @@ struct NotchContentView: View {
         .padding(.horizontal, NotchPanelMetrics.contentHorizontalPadding)
         .padding(.top, ScreenHelper.contentTopInset())
         .padding(.bottom, PanelLayout.bottomPadding)
+        // The running states reserve their own Join row; the message states
+        // (starting soon) get it as extra room at the bottom.
+        .padding(.bottom, !PanelLayout.isRunningState(snapshot) && PanelLayout.hasJoinRow(snapshot) ? PanelLayout.joinRowHeight : 0)
         .frame(width: ScreenHelper.panelWidth, height: height)
         .allowsHitTesting(false)
     }

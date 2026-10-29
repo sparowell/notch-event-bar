@@ -97,3 +97,23 @@ final class PanelLayoutTests: XCTestCase {
         XCTAssertEqual(PanelLayout.height(for: snapshot(state: .upcomingToday, allDay: "x"), topInset: inset), 138)
     }
 }
+
+final class PanelLayoutJoinTests: XCTestCase {
+    private func startingSoon(join: Bool) -> EventProgressSnapshot {
+        EventProgressSnapshot(
+            title: "T", progress: 0, startTimeLabel: "", endTimeLabel: "", elapsedLabel: "",
+            remainingLabel: "", statusLabel: "", secondaryMessage: "Starts in 1m",
+            tint: .blue, state: .startingSoon,
+            joinURL: join ? URL(string: "https://zoom.us/j/1") : nil
+        )
+    }
+
+    func test_startingSoon_withLink_getsAJoinRow() {
+        XCTAssertTrue(PanelLayout.hasJoinRow(startingSoon(join: true)))
+        XCTAssertEqual(
+            PanelLayout.height(for: startingSoon(join: true), topInset: 46)
+                - PanelLayout.height(for: startingSoon(join: false), topInset: 46),
+            PanelLayout.joinRowHeight
+        )
+    }
+}
