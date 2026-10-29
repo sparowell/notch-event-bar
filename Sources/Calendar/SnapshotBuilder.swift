@@ -2,6 +2,9 @@ import Foundation
 import SwiftUI
 
 enum SnapshotBuilder {
+    /// Join appears this long before a meeting starts, and stays while it runs.
+    static let joinLeadTime: TimeInterval = 120
+
     static func computeSnapshot(
         events: [CalendarEvent],
         allDayEvents: [CalendarEvent] = [],
@@ -33,6 +36,15 @@ enum SnapshotBuilder {
             snapshot.concurrentEventCount = running.count - 1
             if let next = upcoming.first, next.startDate < endOfToday {
                 snapshot.nextEvent = nextEvent(for: next, calendar: calendar, locale: locale)
+            }
+            let others = relevant.filter { $0 != current }
+            snapshot.nestedMeetings = nestedMeetings(in: current, among: others, now: now, locale: locale)
+            snapshot.followingEvent = followingEvent(after: current, among: others, before: endOfToday, locale: locale)
+            if snapshot.joinURL == nil {
+                // A meeting about to start, inside the running block or not.
+                snapshot.joinURL = upcoming
+                    .first { $0.startDate.timeIntervalSince(now) <= joinLeadTime }
+                    .flatMap(\.joinURL)
             }
             return snapshot
         }
@@ -75,6 +87,49 @@ enum SnapshotBuilder {
         return snapshot
     }
 
+    /// Events that start and end within `block`, in start order. Ones that run
+    /// past its end stay ordinary "next" events.
+    private static func nestedMeetings(
+        in block: CalendarEvent,
+        among events: [CalendarEvent],
+        now: Date,
+        locale: Locale
+    ) -> [EventProgressSnapshot.NestedMeeting] {
+        let total = max(block.endDate.timeIntervalSince(block.startDate), 1)
+        return events
+            .filter { $0.startDate >= block.startDate && $0.endDate <= block.endDate }
+            .map { event in
+                EventProgressSnapshot.NestedMeeting(
+                    title: event.title.nilIfEmpty ?? Localized.string("Upcoming Meeting", locale: locale),
+                    startDate: event.startDate,
+                    endDate: event.endDate,
+                    startFraction: event.startDate.timeIntervalSince(block.startDate) / total,
+                    widthFraction: event.endDate.timeIntervalSince(event.startDate) / total,
+                    isPast: event.endDate <= now,
+                    secondsUntilStart: max(Int(event.startDate.timeIntervalSince(now)), 0),
+                    joinURL: event.joinURL
+                )
+            }
+    }
+
+    private static func followingEvent(
+        after current: CalendarEvent,
+        among events: [CalendarEvent],
+        before endOfToday: Date,
+        locale: Locale
+    ) -> EventProgressSnapshot.FollowingEvent? {
+        guard let next = events.first(where: { $0.startDate >= current.endDate }),
+              next.startDate < endOfToday else { return nil }
+        return EventProgressSnapshot.FollowingEvent(
+            title: next.title.nilIfEmpty ?? Localized.string("Upcoming Meeting", locale: locale),
+            gapSeconds: Int(next.startDate.timeIntervalSince(current.endDate))
+        )
+    }
+
+    private static func durationLabel(from start: Date, to end: Date, locale: Locale) -> String {
+        DurationLabel.short(minutes: Int(end.timeIntervalSince(start) / 60), locale: locale)
+    }
+
     /// Names the day and time rather than counting down: days away, a live
     /// `DD:HH:MM:SS` was hard to read and redrew every second for nothing.
     private static func upcomingLaterSnapshot(
@@ -101,7 +156,8 @@ enum SnapshotBuilder {
             statusLabel: Localized.string("Upcoming", locale: locale),
             secondaryMessage: Localized.string("Next: \(title) — \(when)", locale: locale),
             tint: event.color,
-            state: .upcomingLater
+            state: .upcomingLater,
+            durationLabel: durationLabel(from: event.startDate, to: event.endDate, locale: locale)
         )
     }
 
@@ -131,7 +187,9 @@ enum SnapshotBuilder {
             tint: event.color,
             state: .inProgress,
             joinURL: event.joinURL,
-            remainingSeconds: remainingSeconds
+            remainingSeconds: remainingSeconds,
+            durationLabel: durationLabel(from: event.startDate, to: event.endDate, locale: locale),
+            tickFractions: ProgressTicks.fractions(durationSeconds: total)
         )
     }
 
@@ -159,7 +217,8 @@ enum SnapshotBuilder {
             secondaryMessage: message,
             tint: event.color,
             state: .startingSoon,
-            joinURL: event.joinURL
+            joinURL: event.startDate.timeIntervalSince(now) <= joinLeadTime ? event.joinURL : nil,
+            durationLabel: durationLabel(from: event.startDate, to: event.endDate, locale: locale)
         )
     }
 
@@ -178,7 +237,9 @@ enum SnapshotBuilder {
 
         let countdown = hours == 0
             ? Localized.string("\(minutes)min", locale: locale)
-            : Localized.string("\(hours)h \(minutes)min", locale: locale)
+            : minutes == 0
+                ? Localized.string("\(hours)h", locale: locale)
+                : Localized.string("\(hours)h \(minutes)min", locale: locale)
 
         var snapshot = EventProgressSnapshot(
             title: title,
@@ -190,7 +251,8 @@ enum SnapshotBuilder {
             statusLabel: Localized.string("Upcoming today", locale: locale),
             secondaryMessage: Localized.string("Next: \(title) in \(countdown)", locale: locale),
             tint: event.color,
-            state: .upcomingToday
+            state: .upcomingToday,
+            durationLabel: durationLabel(from: event.startDate, to: event.endDate, locale: locale)
         )
         snapshot.nextEvent = nextEvent(for: event, calendar: calendar, locale: locale)
         return snapshot
@@ -221,7 +283,8 @@ enum SnapshotBuilder {
             secondaryMessage: nil,
             tint: Color.gray,
             state: .onBreak,
-            remainingSeconds: remainingSeconds
+            remainingSeconds: remainingSeconds,
+            durationLabel: durationLabel(from: start, to: next.startDate, locale: locale)
         )
         snapshot.nextEvent = nextEvent(for: next, calendar: calendar, locale: locale)
         return snapshot
@@ -235,7 +298,8 @@ enum SnapshotBuilder {
         EventProgressSnapshot.NextEvent(
             title: event.title.nilIfEmpty ?? Localized.string("Upcoming Meeting", locale: locale),
             startTimeLabel: formattedTime(event.startDate, calendar: calendar, locale: locale),
-            startDate: event.startDate
+            startDate: event.startDate,
+            joinURL: event.joinURL
         )
     }
 
@@ -244,7 +308,10 @@ enum SnapshotBuilder {
         let minutes = (seconds % 3600) / 60
         let seconds = seconds % 60
 
-        return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
+        // No `00:` in front when the hours are zero: `39:38`, not `00:39:38`.
+        return hours == 0
+            ? String(format: "%02d:%02d", minutes, seconds)
+            : String(format: "%02d:%02d:%02d", hours, minutes, seconds)
     }
 
     private static func formattedTime(_ date: Date, calendar: Calendar, locale: Locale) -> String {

@@ -36,12 +36,42 @@ struct EventProgressSnapshot: Equatable {
     /// Tracked all-day events covering now, for the states whose layout has room
     /// to name them. `nil` while an event or a break is running.
     var allDayMessage: String?
+    /// Length of the event as `45 min` / `1h30`, for the time-range caption.
+    var durationLabel = ""
+    /// Bar positions (0...1) of the faint dividers; empty for short events.
+    var tickFractions: [Double] = []
+    /// Tracked events lying wholly inside the running one, by start.
+    var nestedMeetings: [NestedMeeting] = []
+    /// First event starting at or after the running one ends (today only).
+    var followingEvent: FollowingEvent?
 
     /// Kept in parts so the panel can shorten the title and never the time.
     struct NextEvent: Equatable {
         let title: String
         let startTimeLabel: String
         let startDate: Date
+        /// Meeting link, so the panel can offer Join shortly before it starts.
+        var joinURL: URL?
+    }
+
+    /// A tracked event lying wholly inside the running one, drawn as a capsule
+    /// on its bar. `startFraction`/`widthFraction` place it on that bar.
+    struct NestedMeeting: Equatable {
+        let title: String
+        let startDate: Date
+        let endDate: Date
+        let startFraction: Double
+        let widthFraction: Double
+        let isPast: Bool
+        /// Whole seconds until it starts; 0 once it has.
+        let secondsUntilStart: Int
+        var joinURL: URL?
+    }
+
+    /// What comes right after the running event ends, and how long the gap is.
+    struct FollowingEvent: Equatable {
+        let title: String
+        let gapSeconds: Int
     }
 
     static func noCalendar(locale: Locale = .current) -> EventProgressSnapshot {

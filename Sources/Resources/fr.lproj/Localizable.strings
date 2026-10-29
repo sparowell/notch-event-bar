@@ -1,5 +1,6 @@
 "%lld min" = "%lld min";
 "%lldh %lldmin" = "%lld h %lld min";
+"%lldh" = "%lld h";
 "%lldh%@" = "%lld h %@";
 "%lldmin" = "%lld min";
 "All day: %@" = "Toute la journée : %@";

@@ -75,11 +75,11 @@ final class MenuBarLabelTests: XCTestCase {
     // MARK: - One hour and over: padded hours notation
 
     func test_text_switchesToHoursNotation_atOneHour() {
-        XCTAssertEqual(MenuBarLabel.text(remainingSeconds: 3600, locale: english), "1h00")
+        XCTAssertEqual(MenuBarLabel.text(remainingSeconds: 3600, locale: english), "1h")
     }
 
     func test_text_rollsUpToTheNextHour_whenMinutesRoundTo60() {
-        XCTAssertEqual(MenuBarLabel.text(remainingSeconds: 3599, locale: english), "1h00")
+        XCTAssertEqual(MenuBarLabel.text(remainingSeconds: 3599, locale: english), "1h")
     }
 
     func test_text_padsMinutesToTwoDigits() {
@@ -160,7 +160,7 @@ final class MenuBarLabelTests: XCTestCase {
     }
 
     func test_deltaOverOneHour() {
-        XCTAssertEqual(label(snapshot(.inProgress, remaining: 3900, next: ("A", 7200))), "1h05 · → A in 2h00")
+        XCTAssertEqual(label(snapshot(.inProgress, remaining: 3900, next: ("A", 7200))), "1h05 · → A in 2h")
     }
 
     func test_upcomingToday_withoutNext_isNil() {
@@ -199,6 +199,6 @@ final class MenuBarLabelTests: XCTestCase {
             selectedCalendarIDs: ["c"], now: now, calendar: utcCalendar, locale: english)
         XCTAssertEqual(s.state, .upcomingToday)
         XCTAssertEqual(s.nextEvent?.title, "B")
-        XCTAssertEqual(label(s), "→ B in 3h00")
+        XCTAssertEqual(label(s), "→ B in 3h")
     }
 }

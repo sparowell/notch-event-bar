@@ -147,7 +147,7 @@ final class SnapshotComputationTests: XCTestCase {
             locale: Locale(identifier: "en")
         )
         XCTAssertEqual(snapshot.state, .upcomingToday)
-        XCTAssertEqual(snapshot.secondaryMessage, "Next: Cal B event in 1h 0min")
+        XCTAssertEqual(snapshot.secondaryMessage, "Next: Cal B event in 1h")
     }
 
     func test_overlappingEvents_showEarliestStart() {
@@ -448,8 +448,8 @@ final class SnapshotComputationTests: XCTestCase {
         XCTAssertEqual(snapshot.state, .onBreak)
         XCTAssertEqual(snapshot.title, "Break")
         XCTAssertEqual(snapshot.progress, 10.0 / 40.0, accuracy: 0.0001)
-        XCTAssertEqual(snapshot.elapsedLabel, "00:10:00")
-        XCTAssertEqual(snapshot.remainingLabel, "00:30:00")
+        XCTAssertEqual(snapshot.elapsedLabel, "10:00")
+        XCTAssertEqual(snapshot.remainingLabel, "30:00")
         XCTAssertEqual(snapshot.remainingSeconds, 1800)
         XCTAssertEqual(snapshot.startTimeLabel, time(of: now.addingTimeInterval(-600), locale: english))
         XCTAssertEqual(snapshot.endTimeLabel, time(of: now.addingTimeInterval(30 * 60), locale: english))

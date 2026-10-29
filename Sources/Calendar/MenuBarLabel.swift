@@ -48,14 +48,6 @@ enum MenuBarLabel {
         // Round up: a countdown that reads "0 min" while the event is still
         // running is wrong, and the last minute should tick away as "1 min".
         let totalMinutes = (remainingSeconds + 59) / 60
-        let hours = totalMinutes / 60
-        let minutes = totalMinutes % 60
-
-        guard hours > 0 else {
-            return Localized.string("\(minutes) min", locale: locale)
-        }
-
-        let paddedMinutes = String(format: "%02d", minutes)
-        return Localized.string("\(hours)h\(paddedMinutes)", locale: locale)
+        return DurationLabel.short(minutes: totalMinutes, locale: locale)
     }
 }
