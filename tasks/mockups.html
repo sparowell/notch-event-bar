@@ -1,0 +1,175 @@
+<title>Макеты шторки NotchBar</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: пульт управления, затем макеты раскрытой шторки в натуральную ширину 480 pt; под каждым макетом обычный текст о том, что на нём происходит. */
+:root{--bg:#f6f5f8;--fg:#1d1b24;--mut:#6d6978;--card:#ffffff;--line:#e2dfe8;--accent:#8a4fd0;--amber:#c76a00;--sans:system-ui,-apple-system,'Segoe UI',sans-serif;--mono:ui-monospace,Menlo,monospace}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141218;--fg:#ece9f2;--mut:#9a95a8;--card:#1d1a24;--line:#2d2938;--accent:#b783ee;--amber:#f0a23c;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#141218;--fg:#ece9f2;--mut:#9a95a8;--card:#1d1a24;--line:#2d2938;--accent:#b783ee;--amber:#f0a23c;color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:15px;line-height:1.55;padding-inline:max(16px,env(safe-area-inset-left,0px)) max(16px,env(safe-area-inset-right,0px));padding-block:28px 60px}
+main{max-width:940px;margin:0 auto}
+h1{font-size:26px;line-height:1.2;margin:0 0 8px;font-weight:650;text-wrap:balance}
+h2{font-size:19px;margin:46px 0 8px;font-weight:650;text-wrap:balance}
+h3{font-size:16px;margin:0 0 6px;font-weight:650}
+p{margin:0 0 10px;max-width:70ch}
+.mut{color:var(--mut)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.ctl{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0 12px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;margin:14px 0 6px}
+.ctl label{font-size:14px;color:var(--mut);display:flex;gap:8px;align-items:center}
+input[type=range]{width:230px;accent-color:var(--accent)}
+.fmt{padding:22px 0;border-bottom:1px solid var(--line);display:grid;gap:12px}
+.scroll{overflow-x:auto;padding-bottom:4px}
+.say{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 14px;font-size:14px;max-width:72ch}
+.say b{font-weight:650}
+table{border-collapse:collapse;width:100%;font-size:14px;background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:650;color:var(--mut);font-size:12px;letter-spacing:.05em;text-transform:uppercase}
+tr:last-child td{border-bottom:0}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px}
+/* макет шторки: всегда тёмный, как настоящая */
+.pn{--top:46px;width:480px;box-sizing:border-box;background:#000;color:#fff;border-radius:0 0 28px 28px;padding:var(--top) 28px 22px;position:relative;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Rounded','Segoe UI',system-ui,sans-serif}
+.notch{position:absolute;top:0;left:50%;width:220px;height:38px;margin-left:-110px;border:1px dashed rgba(255,255,255,.4);border-top:0;border-radius:0 0 14px 14px;background:rgba(255,255,255,.07);font:9px/38px ui-monospace,Menlo,monospace;text-align:center;color:rgba(255,255,255,.45);pointer-events:none}
+.gear{position:absolute;right:20px;top:18px;width:26px;height:26px;border-radius:50%;background:#262626}
+.ttl{display:flex;align-items:baseline;gap:12px;padding-right:38px;min-width:0}
+.ttl b{font-size:22px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.ttl .plus{font-size:15px;font-weight:600;opacity:.42}
+.ttl .tm{margin-left:auto;font-size:17px;font-weight:600;opacity:.9;white-space:nowrap}
+.ttl .tm i{font-style:normal;opacity:.5;font-weight:500}
+.bw{position:relative;height:13px;margin-top:18px}
+.bar{position:absolute;inset:0;border-radius:7px;background:#232323;overflow:hidden}
+.fill{position:absolute;left:0;top:0;bottom:0;border-radius:7px;background:linear-gradient(90deg,#d3b3ee,#a56bd6)}
+.hair{position:absolute;top:0;bottom:0;width:1.5px;margin-left:-.75px;background:rgba(255,255,255,.22)}
+.capsule{position:absolute;top:-5px;height:23px;border-radius:999px;background:rgba(240,162,60,.32);border:1.5px solid #f0a23c;box-sizing:border-box}
+.capsule.past{background:rgba(214,178,128,.42);border-color:rgba(214,178,128,.6)}
+.lab{position:absolute;bottom:calc(100% + 4px);left:4px;font-size:11px;font-weight:600;color:#f0a23c;white-space:nowrap;line-height:1.25}
+.lab.r{left:auto;right:4px;text-align:right}
+.lab em{display:block;font-style:normal;color:rgba(255,255,255,.75);font-weight:500}
+.bt{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-top:12px;font-size:13px;font-weight:500;min-width:0}
+.bt .k{opacity:.45;margin-right:6px}
+.bt .m{font-variant-numeric:tabular-nums;white-space:nowrap}
+.bt .nx{opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;margin-left:auto}
+.bt{justify-content:flex-start;gap:16px}
+.bt.rowB{margin-top:8px}
+.bt2{margin-top:8px;font-size:13px;font-weight:500;opacity:.85;overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2}
+.bt .nx2{margin-left:auto;max-width:150px;text-align:right;white-space:normal;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;opacity:.85;line-height:1.25}
+.radios{display:flex;gap:14px;font-size:14px;color:var(--mut)}
+.state{padding:22px 0;border-bottom:1px solid var(--line);display:grid;gap:12px}
+.chg{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px 18px;font-size:14px;max-width:76ch}
+.chg li{margin:3px 0}
+.jr{display:flex;justify-content:center;margin-top:12px}
+.jn{background:rgba(196,84,127,.35);border:1px solid rgba(221,143,176,.55);color:#fff;border-radius:15px;padding:5px 14px;font-size:13px;font-weight:600}
+@media (max-width:700px){.ctl input[type=range]{width:150px}}
+</style>
+<main>
+<h1>Макеты шторки NotchBar</h1>
+<p class="mut">Макеты раскрытой шторки в натуральную ширину, 480 pt. Пунктир сверху — вырез камеры. Блок «Вечерний блок» 17:00–21:00, внутри встреча 18:00–18:30.</p>
+<div class="chg"><b>Что учтено в этом драфте</b>
+<ul>
+<li>Ровные часы пишутся «1h», без нулей.</li>
+<li>Слова «Free» нет. Третье поле: сколько времени после встречи и стрелка с названием следующего события. Часов начала события нет.</li>
+<li>Длинные названия: два варианта расположения третьего поля, выбери ниже.</li>
+<li>Прошедшие встречи на полосе пастельные, но заметные. Будущие полупрозрачные с яркой рамкой.</li>
+<li>Остальное как в прошлом драфте: формат 3, Join за 2 минуты и во время встречи, порядок Elapsed, Remaining.</li>
+</ul></div>
+
+<h2>1. Четыре момента вокруг встречи</h2>
+<div class="ctl">
+  <label><input type="checkbox" id="two"> Вторая встреча в блоке (19:30–19:45, «1-1»)</label>
+  <label><input type="checkbox" id="link" checked> У встречи есть ссылка</label>
+  <label><input type="checkbox" id="long"> Длинное название следующего события</label>
+  <span class="radios">Третье поле:
+    <label><input type="radio" name="lay" value="A" checked> в строке с Elapsed (выбрано)</label>
+    <label><input type="radio" name="lay" value="B"> отдельной строкой</label></span>
+</div>
+<div id="states"></div>
+
+<h2>2. Как выбрать расположение третьего поля</h2>
+<p>Я посмотрел заголовки событий в твоём календаре за октябрь, примерно 40 штук. Типичное название 13–28 символов, медиана около 18. Длиннее 30 только три: приглашение на английском (35) и две записи-пояснения, которые ты делаешь задним числом (64 и 137). Выводы:</p>
+<ul>
+<li>В одной строке с Elapsed и Remaining третье поле вмещает примерно 15 символов названия. Из твоих типичных названий в одну строку влезет меньше половины, остальные придётся переносить на вторую строку или обрезать.</li>
+<li>На отдельной строке помещается примерно 55 символов. Один вариант в одну строку покрывает все твои обычные названия. Минус: шторка выше примерно на 22 pt.</li>
+<li>Моя рекомендация: отдельная строка, при названии длиннее 55 символов перенос на вторую строку и обрезка. Оценки по ширине примерные, точнее проверим на живом экране.</li>
+</ul>
+<p class="mut">Сравнение на одном и том же состоянии («Встреча идёт», длинное название следующего события):</p>
+<div class="two" id="cmp"></div>
+
+<h2>3. Остальные случаи</h2>
+<table>
+<tr><th>Ситуация</th><th>Что показывает шторка</th><th>Меняется ли</th></tr>
+<tr><td>Встреча целиком внутри блока, ещё не началась</td><td>В заголовке блок. На полосе капсула, над ней название и отсчёт. За 2 минуты до начала появляется Join.</td><td>Новое</td></tr>
+<tr><td>Две встречи внутри блока</td><td>Две капсулы. Отсчёт только до ближайшей. Прошедшие капсулы пастельные.</td><td>Новое</td></tr>
+<tr><td>Встреча идёт</td><td>В заголовке встреча со своей полосой и «+1». Join остаётся. Третье поле: сколько времени после встречи и название следующего.</td><td>Частично новое</td></tr>
+<tr><td>Встреча началась внутри блока, а закончится позже него</td><td>Капсулы нет. Это обычное «следующее событие» в нижней строке.</td><td>Как сейчас</td></tr>
+<tr><td>Встреча началась до блока и закончится внутри него</td><td>Пока идёт, в заголовке встреча, блок за «+1». Потом заголовок переключается на блок.</td><td>Как сейчас</td></tr>
+</table>
+
+<h2>4. Вырез камеры и обрезанные подписи</h2>
+<p>У шторки сверху отступ 28 pt, а вырез камеры на этом Mac 38 pt высотой и 220 pt шириной, по центру. Верхушки букв и «+1» в средней части попадают под вырез и не видны. Слева как сейчас, справа с отступом 46 pt.</p>
+<div class="two">
+  <div class="scroll"><div class="mut" style="font-size:12px;margin-bottom:6px">Сейчас</div><div id="old"></div></div>
+  <div class="scroll"><div class="mut" style="font-size:12px;margin-bottom:6px">С отступом 46 pt</div><div id="new"></div></div>
+</div>
+</main>
+<script>
+const $=s=>document.querySelector(s);
+const st={two:false,link:true,long:false,lay:'A'};
+const D=240,S0=1020,JOIN_LEAD=2;
+const LONG='Квартальное планирование с командой продукта и аналитики';
+const clock=m=>{const t=S0+m;return Math.floor(t/60)+':'+String(t%60).padStart(2,'0')};
+const fmtMin=m=>{if(m<60)return `${m} min`;const h=Math.floor(m/60),r=m%60;return r?`${h}h${String(r).padStart(2,'0')}`:`${h}h`};
+const dur=fmtMin;
+const hms=sec=>{const h=Math.floor(sec/3600),m=Math.floor(sec%3600/60),s=sec%60,p=n=>String(n).padStart(2,'0');return h>0?`${p(h)}:${p(m)}:${p(s)}`:`${p(m)}:${p(s)}`};
+const meets=()=>{const a=[{s:60,e:90,n:'WHS INT Analytics Sync'}];if(st.two)a.push({s:150,e:165,n:st.long?LONG:'1-1'});return a};
+const after=()=>st.long?LONG:'🏋️ Тренировка';
+function panel(o={}){
+  const top=o.top??46,now=o.now??40,ms=meets(),lay=o.lay??st.lay;
+  const cur=o.forceMeeting?ms[0]:ms.find(m=>m.s<=now&&now<m.e);
+  const up=ms.filter(m=>m.s>now);
+  let title,plus='',range,prog,el,rem,hair='',caps='',third,join=false,room=18;
+  if(cur){
+    title=cur.n;plus='+1';range=`${clock(cur.s)} – ${clock(cur.e)} (${dur(cur.e-cur.s)})`;
+    prog=o.forceMeeting?.5:(now-cur.s)/(cur.e-cur.s);
+    el=o.forceMeeting?900:(now-cur.s)*60;rem=o.forceMeeting?900:(cur.e-now)*60;
+    const nm=ms.find(m=>m.s>=cur.e),gap=(nm?nm.s:D)-cur.e;
+    third=`${fmtMin(gap)} → ${nm?nm.n:after()}`;
+    join=st.link;
+  }else{
+    title='🎯 Вечерний блок';range='17:00 – 21:00 (4h)';prog=now/D;el=now*60;rem=(D-now)*60;
+    hair=[.25,.5,.75].map(x=>`<i class="hair" style="left:${x*100}%"></i>`).join('');
+    const nx=up[0];
+    third=nx?`→ ${nx.n}`:`→ ${after()}`;
+    join=!!(nx&&st.link&&nx.s-now<=JOIN_LEAD);
+    caps=ms.map(m=>{
+      const past=m.e<=now,nearest=up[0]===m,r=m.s/D>.55;
+      let lab='';
+      if(!past)lab=nearest?`${m.n}<em>in ${fmtMin(Math.ceil(m.s-now))}</em>`:m.n;
+      return `<i class="capsule ${past?'past':''}" style="left:${m.s/D*100}%;width:${(m.e-m.s)/D*100}%">${lab?`<span class="lab ${r?'r':''}">${lab}</span>`:''}</i>`}).join('');
+    room=up.length?46:18;
+  }
+  const rowA=`<div class="bt"><span class="m"><span class="k">Elapsed</span>${hms(Math.round(el))}</span><span class="m"><span class="k">Remaining</span>${hms(Math.round(rem))}</span><span class="nx2">${third}</span></div>`;
+  const rowB=`<div class="bt"><span class="m"><span class="k">Elapsed</span>${hms(Math.round(el))}</span><span class="m"><span class="k">Remaining</span>${hms(Math.round(rem))}</span></div><div class="bt2">${third}</div>`;
+  return `<div class="pn" style="--top:${top}px"><div class="notch">вырез камеры</div><div class="gear"></div>
+  <div class="ttl"><b>${title}</b>${plus?`<span class="plus">${plus}</span>`:''}<span class="tm">${range.replace(/\((.*)\)/,'<i>($1)</i>')}</span></div>
+  <div class="bw" style="margin-top:${room}px"><div class="bar"><div class="fill" style="width:${prog*100}%"></div>${hair}</div>${caps}</div>
+  ${lay==='A'?rowA:rowB}
+  ${join?`<div class="jr"><span class="jn">Join</span></div>`:''}</div>`;
+}
+const STATES=[
+ {now:40,n:'За 20 минут до встречи',say:'<b>Что здесь происходит.</b> Идёт блок. Встреча внутри него отмечена капсулой: над ней название и отсчёт. Внизу стрелка с названием следующего события. Join нет, до встречи далеко.'},
+ {now:58,n:'За 2 минуты до встречи',say:'<b>Что здесь происходит.</b> Тот же блок, но появилась строка Join: можно подключиться заранее. Кнопка относится к встрече, не к блоку.'},
+ {now:70,n:'Встреча идёт',say:'<b>Что здесь происходит.</b> В заголовке встреча со своей полосой, «+1» означает, что блок идёт параллельно. Join остаётся на случай переподключения. Внизу сначала время после встречи до следующего события, потом стрелка и его название.'},
+ {now:100,n:'Встреча прошла, блок продолжается',say:'<b>Что здесь происходит.</b> Заголовок снова блок. Прошедшая встреча осталась на полосе пастельной заливкой, ещё не наступившая (если включить вторую встречу) полупрозрачная.'}
+];
+function draw(){
+  $('#states').innerHTML=STATES.map(s=>`<div class="state"><h3>${s.n}</h3><div class="scroll">${panel({now:s.now})}</div><div class="say">${s.say}</div></div>`).join('');
+  const lg=st.long;st.long=true;
+  $('#cmp').innerHTML=['A','B'].map(l=>`<div class="scroll"><div class="mut" style="font-size:12px;margin-bottom:6px">${l==='A'?'А. В строке с Elapsed, два ряда':'Б. Отдельной строкой'}</div>${panel({now:70,lay:l})}</div>`).join('');
+  st.long=lg;
+  $('#old').innerHTML=panel({top:28,forceMeeting:true});
+  $('#new').innerHTML=panel({top:46,forceMeeting:true});
+}
+$('#two').onchange=e=>{st.two=e.target.checked;draw()};
+$('#link').onchange=e=>{st.link=e.target.checked;draw()};
+$('#long').onchange=e=>{st.long=e.target.checked;draw()};
+document.querySelectorAll('input[name=lay]').forEach(r=>r.onchange=e=>{st.lay=e.target.value;draw()});
+draw();
+</script>
