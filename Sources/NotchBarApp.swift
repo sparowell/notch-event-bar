@@ -17,20 +17,6 @@ struct NotchBarApp: App {
                     appDelegate.handlePreferencesChanged()
                 }
             )
-            Divider()
-            Button {
-                Task {
-                    await appDelegate.calendarManager.refreshEvents(using: appDelegate.preferences)
-                    appDelegate.progressModel.refreshSnapshot()
-                }
-            } label: {
-                Text("Refresh Events", bundle: Localized.resources)
-            }
-            Button {
-                NSApp.terminate(nil)
-            } label: {
-                Text("Quit", bundle: Localized.resources)
-            }
         } label: {
             MenuBarStatusLabel(
                 progressModel: appDelegate.progressModel,

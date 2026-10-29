@@ -96,6 +96,17 @@ struct SettingsView: View {
                 .padding(.top, 2)
 
             HStack {
+                // Same actions whether settings open from the menu bar or the
+                // notch, so neither entry point is missing one.
+                Button {
+                    onPreferencesChanged()
+                } label: {
+                    Text("Refresh Events", bundle: Localized.resources)
+                }
+                .buttonStyle(.plain)
+                .font(.system(size: 12))
+                .foregroundStyle(.secondary)
+
                 Spacer()
                 Button {
                     NSApplication.shared.terminate(nil)
