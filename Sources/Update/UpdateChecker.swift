@@ -69,7 +69,7 @@ enum LatestReleaseLocator {
         case unexpectedResponse
     }
 
-    static let latestReleaseURL = URL(string: "https://github.com/Periicles/Notchapp/releases/latest")!
+    static let latestReleaseURL = URL(string: "https://github.com/sparowell/Notchapp/releases/latest")!
     private static let timeout: TimeInterval = 10
 
     private static let session: URLSession = {

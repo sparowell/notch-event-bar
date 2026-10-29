@@ -93,7 +93,7 @@ Remove with `brew uninstall --cask notchbar` (add `--zap` to also delete its dat
 ### One command, without Homebrew
 
 ```sh
-curl -fsSL -o /tmp/NotchBar.dmg https://github.com/Periicles/Notchapp/releases/latest/download/NotchBar.dmg &&
+curl -fsSL -o /tmp/NotchBar.dmg https://github.com/sparowell/Notchapp/releases/latest/download/NotchBar.dmg &&
 hdiutil attach -quiet -nobrowse -mountpoint /tmp/NotchBar.mount /tmp/NotchBar.dmg &&
 cp -R /tmp/NotchBar.mount/NotchBar.app /Applications/ &&
 hdiutil detach -quiet /tmp/NotchBar.mount && rm /tmp/NotchBar.dmg
@@ -103,7 +103,7 @@ Nothing is piped into a shell — every step is visible above. `curl` does not s
 
 ### Manual (`.dmg`)
 
-1. Download [NotchBar.dmg](https://github.com/Periicles/Notchapp/releases/latest/download/NotchBar.dmg), or get it from the [NotchBar website](https://periicles.github.io/Notchapp/).
+1. Download [NotchBar.dmg](https://github.com/sparowell/Notchapp/releases/latest/download/NotchBar.dmg), or get it from the [NotchBar website](https://sparowell.github.io/Notchapp/).
 2. Open the `.dmg` and drag **NotchBar** into your **Applications** folder.
 3. Open NotchBar. The first time, macOS blocks it — expected for an app Apple has not notarized, downloaded through a browser.
 4. Open **System Settings → Privacy & Security**, scroll down, and click **Open Anyway**, then confirm.
@@ -142,7 +142,7 @@ The cask is bumped automatically whenever a release is published, so Homebrew is
 **Clone, build, and run**
 
 ```sh
-git clone https://github.com/Periicles/Notchapp.git
+git clone https://github.com/sparowell/Notchapp.git
 cd Notchapp
 swift build
 swift run
@@ -215,13 +215,7 @@ git push origin v0.3.0
 
 The version comes from the tag (`vX.Y.Z` → `X.Y.Z`) and is injected into the app at build time — no need to edit `Info.plist`. The `CFBundleShortVersionString` checked into `Supporting/Info.plist` is only a placeholder for local `swift run` builds; every packaged build overwrites it. Releases are published as stable, which is what keeps `/releases/latest/download/NotchBar.dmg` resolving — that URL skips pre-releases.
 
-Publishing a release also bumps the [Homebrew cask](https://github.com/Periicles/homebrew-tap). The `bump-cask` job computes the sha256 of the released `.dmg`, opens a pull request on the tap and turns on auto-merge, so the bump lands as soon as the tap's `brew test-bot` is green and `brew upgrade --cask notchbar` serves the new version with no manual step. It needs one repository secret:
-
-| Secret | For |
-|---|---|
-| `TAP_TOKEN` | fine-grained PAT with **contents**, **pull requests** and **issues** write access on `Periicles/homebrew-tap` |
-
-To rehearse the rewrite without pushing anything: `scripts/bump-cask.sh 0.3.0 "$(brew --repository periicles/tap)" --dry-run`.
+This fork does not publish a Homebrew cask: the release workflow only builds the `.dmg` and attaches it to the GitHub Release. The `brew` instructions above belong to upstream.
 
 **Notarization is not planned** — it needs a paid Apple Developer ID, and clearing the quarantine flag is a one-line workaround for the routes that set one. Kept here in case that ever changes: add these repository secrets and follow the commented hooks in `release.yml` / `scripts/package.sh`.
 
@@ -253,3 +247,9 @@ cp -R dist/NotchBar.app /Applications/ && open /Applications/NotchBar.app
 ```
 
 Every rebuild changes the ad-hoc signature, so macOS may ask for Calendar access again.
+
+**Updates and releases.** The main way to update is the build above (`git pull`, then `scripts/package.sh`). The in-app update check only tells you that a newer release exists in [sparowell/Notchapp](https://github.com/sparowell/Notchapp/releases/latest); it does not install anything. Pushing a tag publishes a `.dmg` on that page. Tags must be purely numeric, `v0.5.0` or later (no suffixes such as `-rc1`). That `.dmg` is not notarized, so after copying the app to Applications run:
+
+```bash
+xattr -dr com.apple.quarantine /Applications/NotchBar.app
+```

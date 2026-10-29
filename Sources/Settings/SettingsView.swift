@@ -18,6 +18,13 @@ struct SettingsView: View {
         NSScroller.scrollerWidth(for: .regular, scrollerStyle: NSScroller.preferredScrollerStyle) + 2
     }
 
+    private static let calendarRowHeight: CGFloat = 22
+    private static let calendarListMaxHeight: CGFloat = 220
+
+    static func calendarListHeight(rows: Int) -> CGFloat {
+        min(max(CGFloat(rows), 1) * calendarRowHeight, calendarListMaxHeight)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             Text("NotchBar")
@@ -54,7 +61,11 @@ struct SettingsView: View {
                     // right-aligned checkboxes when scroll bars are always shown.
                     .padding(.trailing, Self.scrollerInset)
                 }
-                .frame(maxHeight: 220)
+                // A ScrollView has no intrinsic height, and the menu bar's
+                // `.window` host sizes itself to its content, so a bare
+                // `maxHeight` collapses the list to nothing there. Give it the
+                // height of its rows, capped, so it is never empty.
+                .frame(height: Self.calendarListHeight(rows: calendarManager.availableCalendars.count))
             }
 
             settingRow("Show countdown in the menu bar", isOn: $preferences.showsMenuBarCountdown)

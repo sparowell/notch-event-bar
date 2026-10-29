@@ -3,7 +3,7 @@
 
 @MainActor
 final class UpdateCheckerTests: XCTestCase {
-    private let releaseURL = URL(string: "https://github.com/Periicles/Notchapp/releases/tag/v0.4.0")!
+    private let releaseURL = URL(string: "https://github.com/sparowell/Notchapp/releases/tag/v0.4.0")!
 
     private struct OfflineError: Error {}
 
@@ -69,7 +69,7 @@ final class UpdateCheckerTests: XCTestCase {
     func test_latestReleaseURL_pointsAtTheRepository() {
         XCTAssertEqual(
             LatestReleaseLocator.latestReleaseURL.absoluteString,
-            "https://github.com/Periicles/Notchapp/releases/latest"
+            "https://github.com/sparowell/Notchapp/releases/latest"
         )
     }
 

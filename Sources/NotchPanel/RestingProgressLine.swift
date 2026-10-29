@@ -7,7 +7,7 @@ import SwiftUI
 /// during an interactive Space switch — no window flag prevents that (see the
 /// collapsed surface removed for the same reason).
 enum RestingProgressLine {
-    static let height: CGFloat = 3
+    static let height: CGFloat = 6
 
     /// The fraction to fill, or `nil` when nothing should be drawn.
     static func progress(for snapshot: EventProgressSnapshot, enabled: Bool) -> Double? {
