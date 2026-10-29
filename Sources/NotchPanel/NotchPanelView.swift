@@ -136,6 +136,9 @@ private struct InProgressContent: View {
             AnimatedProgressBar(progress: snapshot.progress, tint: snapshot.tint, isAnimating: isAnimating)
                 .frame(maxWidth: .infinity)
                 .frame(height: PanelLayout.barHeight)
+                .overlay {
+                    NestedMeetingsBar(tickFractions: snapshot.tickFractions, meetings: snapshot.nestedMeetings)
+                }
                 .padding(.top, gap)
 
             HStack(alignment: .top, spacing: 16) {
