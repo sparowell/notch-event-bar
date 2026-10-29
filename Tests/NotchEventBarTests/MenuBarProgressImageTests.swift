@@ -1,6 +1,6 @@
 import SwiftUI
 import XCTest
-@testable import NotchBar
+@testable import NotchEventBar
 
 final class MenuBarProgressImageTests: XCTestCase {
     private func snapshot(state: EventProgressSnapshot.State, progress: Double, tint: Color = .orange) -> EventProgressSnapshot {

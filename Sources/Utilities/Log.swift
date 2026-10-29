@@ -1,7 +1,7 @@
 import os
 
 enum Log {
-    private static let subsystem = "com.periicles.NotchBar"
+    private static let subsystem = "com.sparowell.NotchEventBar"
 
     static let calendar = Logger(subsystem: subsystem, category: "calendar")
     static let panel = Logger(subsystem: subsystem, category: "panel")

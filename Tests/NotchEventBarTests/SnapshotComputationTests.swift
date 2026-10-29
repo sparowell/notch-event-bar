@@ -1,6 +1,6 @@
 import XCTest
 import SwiftUI
-@testable import NotchBar
+@testable import NotchEventBar
 
 @MainActor
 final class SnapshotComputationTests: XCTestCase {

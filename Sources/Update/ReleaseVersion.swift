@@ -1,9 +1,9 @@
 import Foundation
 
-/// A `major.minor.patch` version as NotchBar tags its releases (`v0.3.3`).
+/// A `major.minor.patch` version as Notch Event Bar tags its releases (`v0.3.3`).
 /// Missing trailing components count as zero, so `v1.2` equals `1.2.0`.
 /// Anything else — pre-release suffixes included — is rejected rather than
-/// guessed at: NotchBar only publishes plain numeric tags.
+/// guessed at: Notch Event Bar only publishes plain numeric tags.
 struct ReleaseVersion: Comparable, CustomStringConvertible, Sendable {
     private static let componentCount = 3
 

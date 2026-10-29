@@ -1,5 +1,5 @@
 @preconcurrency import XCTest
-@testable import NotchBar
+@testable import NotchEventBar
 
 @MainActor
 final class PreferencesTests: XCTestCase {
@@ -8,7 +8,7 @@ final class PreferencesTests: XCTestCase {
 
     override func setUp() async throws {
         try await super.setUp()
-        suiteName = "NotchBarTests.\(UUID().uuidString)"
+        suiteName = "NotchEventBarTests.\(UUID().uuidString)"
         defaults = UserDefaults(suiteName: suiteName)
     }
 

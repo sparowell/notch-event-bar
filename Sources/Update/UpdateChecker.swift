@@ -1,7 +1,7 @@
 import Foundation
 
 /// Compares the running version with the latest GitHub release, only when the
-/// user asks: NotchBar never reaches the network on its own.
+/// user asks: Notch Event Bar never reaches the network on its own.
 @MainActor
 final class UpdateChecker: ObservableObject {
     enum State: Equatable {
@@ -69,7 +69,7 @@ enum LatestReleaseLocator {
         case unexpectedResponse
     }
 
-    static let latestReleaseURL = URL(string: "https://github.com/sparowell/Notchapp/releases/latest")!
+    static let latestReleaseURL = URL(string: "https://github.com/sparowell/notch-event-bar/releases/latest")!
     private static let timeout: TimeInterval = 10
 
     private static let session: URLSession = {

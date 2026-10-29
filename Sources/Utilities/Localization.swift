@@ -26,7 +26,7 @@ enum Localized {
         return .module
     }()
 
-    private static let resourceBundleName = "NotchBar_NotchBar.bundle"
+    private static let resourceBundleName = "NotchEventBar_NotchEventBar.bundle"
 
     static func string(_ keyAndValue: String.LocalizationValue, locale: Locale = .current) -> String {
         String(localized: keyAndValue, bundle: bundle(for: locale))

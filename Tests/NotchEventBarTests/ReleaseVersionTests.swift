@@ -1,5 +1,5 @@
 import XCTest
-@testable import NotchBar
+@testable import NotchEventBar
 
 final class ReleaseVersionTests: XCTestCase {
     // MARK: - Parsing
@@ -38,16 +38,16 @@ final class ReleaseVersionTests: XCTestCase {
     // MARK: - Release page location
 
     func test_fromReleaseLocation_readsTag() {
-        let url = URL(string: "https://github.com/sparowell/Notchapp/releases/tag/v0.4.0")!
+        let url = URL(string: "https://github.com/sparowell/notch-event-bar/releases/tag/v0.4.0")!
         XCTAssertEqual(ReleaseVersion(releaseLocation: url), ReleaseVersion("0.4.0"))
     }
 
     func test_fromReleaseLocation_rejectsNonTagPaths() {
         let urls = [
-            "https://github.com/sparowell/Notchapp/releases",
-            "https://github.com/sparowell/Notchapp/releases/latest",
-            "https://github.com/sparowell/Notchapp/releases/tag/nightly",
-            "https://github.com/sparowell/Notchapp/tree/v0.4.0",
+            "https://github.com/sparowell/notch-event-bar/releases",
+            "https://github.com/sparowell/notch-event-bar/releases/latest",
+            "https://github.com/sparowell/notch-event-bar/releases/tag/nightly",
+            "https://github.com/sparowell/notch-event-bar/tree/v0.4.0",
         ]
         for string in urls {
             XCTAssertNil(ReleaseVersion(releaseLocation: URL(string: string)!), string)

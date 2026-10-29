@@ -1,255 +1,49 @@
-# NotchBar
+# Notch Event Bar
 
-Minimalist macOS app that uses the physical notch to show progress on the current calendar event.
+A macOS app that shows where you are in your day: the event that is running, how much of it is left, and what comes next. It lives in the menu bar and in a panel that opens under the notch.
 
-## What it does
+Reworked from [NotchBar](https://github.com/Periicles/Notchapp) by Periicles (MIT). The original licence is kept in `LICENSE`.
 
-- Pick one or more calendars (checkboxes in Settings).
-- If a tracked calendar is deleted or unshared, NotchBar won't auto-pick a replacement — reselect one in Settings.
-- English and French, following the system language.
-- Respects **Reduce Motion**: with it on, the panel crossfades in place — no scale, offset or spring — and the progress bar's shimmer is frozen.
-- At rest NotchBar draws nothing in the notch — the physical notch shows through untouched (so it never slides with the desktop during Space switches).
-- **Progress line under the notch** (off by default, toggle in Settings): a hairline filled with the running event's — or the break's — progress, in the event's colour. It is the one thing drawn at rest, and it comes with a known trade-off: anything drawn at rest slides with the desktop during an interactive Space switch, and no window setting prevents it.
-- **Menu-bar countdown** (on by default, toggle in Settings): while an event or a break is running, the time left shows next to the menu-bar icon — `23 min`, then `1h05` past the hour. No event running, or the toggle off, and it's the icon alone.
-- **Event notifications** (off by default, toggle in Settings): a notification 5 minutes before a tracked event starts, and 5 minutes before it ends. Turning it on is what asks macOS for notification permission — and macOS only ever asks once: after a refusal it never prompts again, so Settings then says so and offers a button straight to the Notifications pane. Events shorter than 5 minutes only get the start one.
-- All-day events never drive the panel or notifications. A tracked one covering today is named under the message of every waiting state (`All day: <title>`), and is the message itself when nothing else is planned.
-- Times follow the system language and 12/24-hour setting.
-- **Update check, on demand only**: **Check for Updates** in Settings asks GitHub where its latest release points (one `HEAD` request, no cookies, no identifier) and links to it when it is newer. NotchBar never reaches the network unless you press that button.
-- On hover, the panel expands and shows one of eight contextual states, computed across the events of every tracked calendar:
+## What it shows
 
-| State | Trigger | Shown |
-|---|---|---|
-| **In progress** | Event overlaps now | Title (`+N` beside it when other tracked events run at the same time — the one ending first is shown), start–end times, animated progress bar, elapsed / remaining, `→ <title> <time>` for the next tracked event later today, + **Join** button when a meeting link is detected (Zoom, Meet, Teams, Webex) |
-| **Break** | The next tracked event is more than 5 minutes away today, and either an event ended earlier today or the *Start of day* setting (default 08:00) has passed | Same layout as *In progress*, in grey: `Break`, progress through the gap, elapsed / remaining, and the next event |
-| **Starting soon** | Next event in ≤ 5 minutes | `Starts in Xm — <title>` + **Join** button when a meeting link is detected (Zoom, Meet, Teams, Webex) |
-| **Upcoming today** | Next event later today | `Next: <title> in Xh Ymin` |
-| **Upcoming** | Next event is beyond today (up to 7 days out) | `Next: <title> — tomorrow 9:00`, or the weekday past tomorrow (`Tue 9:00`) |
-| **Empty today** | No events found | `No event today`, or `All day: <title>` when a tracked all-day event covers today |
-| **No calendar** | No calendars selected | `Pick a calendar in Settings` |
-| **Access off** | Calendar access denied or revoked | `Calendar access is off — re-enable in Settings` |
+- **Menu bar:** time left in the running event, then `→ next event in 35 min`. Optionally a mini progress bar in place of the icon and a limit on how many words of a title are shown.
+- **Panel** (hover the notch): title, time range with duration, a progress bar, elapsed and remaining time, and what follows.
+- **Breaks:** the gap between two events gets its own bar, measured from the end of the last event or from the start of your day.
+- **Nested meetings:** a meeting inside a longer event (a work block, say) appears as a capsule on the bar, with its name and a countdown.
+- **Join:** a button appears two minutes before a meeting with a Zoom, Meet, Teams or Webex link, and stays while it runs.
+- **Settings:** which calendars to track, start of the day, notifications, colours and thickness of the capsules, emoji instead of words for elapsed and remaining.
 
-Every waiting state — *Starting soon*, *Upcoming today*, *Upcoming* — also carries `All day: <title>` under its message when a tracked all-day event covers today. The in-progress and break layouts do not: their row is full.
+Events are read from the macOS Calendar through EventKit, so a Google calendar works once it is added to Calendar.app. The app only goes online when you press Check for Updates.
 
-## Project layout
+## Install
 
-```
-Sources/
-├── NotchBarApp.swift              # @main + AppDelegate + the menu-bar status item
-├── NotchPanel/                    # NSPanel windows, hover tracking, SwiftUI rendering, motion style
-├── Calendar/                      # EventKit access, snapshot model, meeting links, notifications
-├── Settings/                      # UserDefaults-backed preferences + settings UI
-├── Update/                        # On-demand check of the latest GitHub release
-├── Utilities/                     # ScreenHelper (notch geometry), Localized helper, os.Logger categories
-└── Resources/                     # en.lproj/ + fr.lproj/ Localizable.strings, processed natively by SwiftPM
-Tests/
-└── NotchBarTests/                 # XCTest target (@testable import NotchBar)
-Supporting/
-├── Info.plist                     # LSUIElement, calendars usage description, bundle metadata
-└── NotchBar.entitlements          # Sandbox + calendars + outgoing network (update check only)
+1. Download `NotchEventBar.dmg` from [Releases](https://github.com/sparowell/notch-event-bar/releases/latest) and drag the app to Applications.
+2. The app is signed ad hoc and not notarized, so macOS blocks it on first launch. Lift the block once:
+
+```bash
+xattr -dr com.apple.quarantine /Applications/NotchEventBar.app
 ```
 
-## Architecture
+3. Open it and allow full access to Calendars. Pick the calendars to track in the settings (the gear in the panel, or the menu bar icon).
 
-NotchBar is intentionally simple — no external dependencies, no framework layers.
+Requires macOS 14 or later.
 
-**SPM-only (no `.xcodeproj`)**
-Swift Package Manager is the sole build system. This keeps builds fully reproducible and eliminates Xcode project file merge conflicts in team workflows.
+## Build from source
 
-**`NSPanel` over `NSWindow`**
-The notch overlay is an `NSPanel` configured as `borderless` + `nonactivatingPanel`. This combination keeps the panel visible at the correct screen layer without stealing keyboard focus from the active app.
+Needs the full Xcode.
 
-**Seven-state snapshot model**
-`EventProgressModel` holds an `EventProgressSnapshot` — an immutable, `Equatable` value derived from live EventKit data. `CalendarManager` maps EventKit into plain `CalendarEvent` values; `SnapshotBuilder` turns those into a snapshot; the view renders whatever snapshot it receives. All conditional logic is isolated in `SnapshotBuilder.computeSnapshot`, making each state independently testable without a running EventKit store.
-
-**Data flow**
-```
-EventKit → CalendarManager → EventProgressSnapshot → NotchPanelView
-```
-`CalendarManager` owns `EKEventStore`, publishes the fetch window as `[CalendarEvent]` values, and polls every 30s — paused while the screens are asleep, with one catch-up refresh on wake — plus reacts to `EKEventStoreChanged`. If Calendar access is granted after launch — e.g. from System Settings, without restarting NotchBar — the store-changed notification and each panel open re-check authorization and pick up the change automatically. `NotchPanelView` observes `EventProgressModel` via `@ObservedObject`.
-
-**Idle-first performance**
-The 1-second refresh tick and the 60fps progress-bar shimmer run **only while the panel is open** (hover). While collapsed, the only live work is the menu-bar countdown's tick — one snapshot recompute every 30 seconds, matching `CalendarManager`'s polling cadence, and only while the toggle is on. Turn the countdown off and NotchBar does no live work at all when collapsed. Snapshots are `Equatable`, so redundant recomputes never trigger a SwiftUI invalidation.
-
-**`LSUIElement`**
-Set in `Info.plist`, this flag hides the app from the Dock and the Cmd-Tab app switcher. NotchBar runs as a pure background UI layer with no Dock presence.
-
-## Installation
-
-NotchBar is ad-hoc signed, not Apple-notarized — notarization needs a paid Apple Developer ID and is not planned. macOS refuses to open such an app whenever the copy carries a **quarantine flag**, and browsers and Homebrew both attach one. Only the `curl` route below never sets it; the other two clear it in one extra step.
-
-### Homebrew (recommended)
-
-```sh
-brew tap periicles/tap
-brew trust periicles/tap          # third-party casks need an explicit trust (Homebrew 6+)
-brew install --cask notchbar
-xattr -dr com.apple.quarantine /Applications/NotchBar.app
-```
-
-Homebrew always quarantines a cask: `--no-quarantine` was removed in Homebrew 6 and now fails with `Error: invalid option: --no-quarantine`. The last line clears the flag from the copy just installed, which is what lets an ad-hoc signed app open; without it macOS blocks the first launch until you allow it under **System Settings → Privacy & Security → Open Anyway**.
-
-Remove with `brew uninstall --cask notchbar` (add `--zap` to also delete its data).
-
-### One command, without Homebrew
-
-```sh
-curl -fsSL -o /tmp/NotchBar.dmg https://github.com/sparowell/Notchapp/releases/latest/download/NotchBar.dmg &&
-hdiutil attach -quiet -nobrowse -mountpoint /tmp/NotchBar.mount /tmp/NotchBar.dmg &&
-cp -R /tmp/NotchBar.mount/NotchBar.app /Applications/ &&
-hdiutil detach -quiet /tmp/NotchBar.mount && rm /tmp/NotchBar.dmg
-```
-
-Nothing is piped into a shell — every step is visible above. `curl` does not set the quarantine flag, so the app opens with a normal double-click afterwards.
-
-### Manual (`.dmg`)
-
-1. Download [NotchBar.dmg](https://github.com/sparowell/Notchapp/releases/latest/download/NotchBar.dmg), or get it from the [NotchBar website](https://sparowell.github.io/Notchapp/).
-2. Open the `.dmg` and drag **NotchBar** into your **Applications** folder.
-3. Open NotchBar. The first time, macOS blocks it — expected for an app Apple has not notarized, downloaded through a browser.
-4. Open **System Settings → Privacy & Security**, scroll down, and click **Open Anyway**, then confirm.
-
-> **Why the extra step?** The app is ad-hoc signed, so Gatekeeper rejects the quarantine flag your browser attached to the download. You do this once; afterwards it opens with a normal double-click. The `curl` route above avoids the step entirely.
-
-On first launch, grant Calendar access when prompted, then hover over the notch and click the settings icon to choose which calendars to track.
-
-## Updating
-
-NotchBar never looks for new versions on its own. To find out whether one exists, hover the notch → open settings → **Check for Updates**; when a newer release is out, its link opens the release page. Then take the route matching how you installed it:
-
-| Installed with | Update with |
-|---|---|
-| Homebrew | `brew upgrade --cask notchbar`, then `xattr -dr com.apple.quarantine /Applications/NotchBar.app` again |
-| The one-command install | Quit NotchBar, then re-run the exact same command — it overwrites the copy in `/Applications` |
-| The `.dmg` | Quit NotchBar, download the latest `.dmg` and drag the app over the old one |
-
-The cask is bumped automatically whenever a release is published, so Homebrew is the route that keeps you closest to the latest version. It does ask for the `xattr` line every time: Homebrew carries an unquarantined app's state across an upgrade only while its signing identity is unchanged, and an ad-hoc signature is designated by the binary's `cdhash`, which every build changes. Your settings and calendar selection survive an update — they live in the app's container, not in the bundle — but macOS may ask for Calendar access again after the app bundle is replaced.
-
-## Uninstall
-
-1. If you turned on **Launch at login**, hover the notch → open settings → toggle it **off** first (this removes the login item cleanly). You can also remove it later under **System Settings → General → Login Items**.
-2. Quit NotchBar: click the NotchBar icon in the menu bar → **Quit**, or hover the notch → open settings → **Quit NotchBar**.
-3. Drag **NotchBar** from **Applications** to the Trash.
-4. *Optional — remove leftover settings:* delete `~/Library/Containers/com.periicles.NotchBar/`.
-5. *Optional — revoke Calendar access:* **System Settings → Privacy & Security → Calendars**.
-
-## Getting Started
-
-**Prerequisites**
-
-- macOS 14 or later
-- [Xcode](https://developer.apple.com/xcode/) full install (required for XCTest and the Swift 6.1 toolchain)
-
-**Clone, build, and run**
-
-```sh
-git clone https://github.com/sparowell/Notchapp.git
-cd Notchapp
+```bash
 swift build
-swift run
+swift test
+scripts/package.sh        # dist/NotchEventBar.app and .dmg
 ```
 
-On first launch, grant Calendar access when the system prompt appears (or later via **System Settings → Privacy & Security → Calendars**). Then hover over the physical notch and click the settings icon to choose which calendars to track.
+To update a local install: `git pull`, `scripts/package.sh`, replace the app in `/Applications`.
 
-## Development
+## Releases
 
-**Running tests**
+Tags of the form `v0.5.0` (numeric only) trigger `.github/workflows/release.yml`, which builds and publishes the dmg.
 
-The test target depends on `XCTest`, which ships with full Xcode (not Command Line Tools). If `xcode-select -p` points at `/Library/Developer/CommandLineTools`, set `DEVELOPER_DIR` for the test invocation:
+## Licence
 
-```sh
-DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer swift test
-```
-
-**Linting**
-
-Install [SwiftLint](https://github.com/realm/SwiftLint) and run it from the project root:
-
-```sh
-brew install swiftlint
-swiftlint
-```
-
-The CI pipeline runs `swiftlint` on every PR. Fix all errors before pushing.
-
-## Contributing
-
-**Branch naming**
-
-| Prefix | Use for |
-|---|---|
-| `feature/<topic>` | New functionality |
-| `fix/<topic>` | Bug fixes |
-| `docs/<topic>` | Documentation-only changes |
-| `refactor/<topic>` | Code changes with no behavior change |
-
-**Commit style** — [Conventional Commits](https://www.conventionalcommits.org)
-
-```
-feat: add weekly agenda view
-fix: correct progress bar overflow at event boundary
-refactor: extract snapshot helpers into static methods
-test: cover upcomingToday state with same-day boundary
-docs: document five-state model in README
-```
-
-**Before opening a PR**
-
-1. `swift test` — all tests pass
-2. `swiftlint` — zero errors
-3. New non-trivial logic is covered by tests
-4. One concern per PR — avoid mixing features with refactors
-5. Add an entry under `## [Unreleased]` in [CHANGELOG.md](CHANGELOG.md) when behavior changes
-
-The CI pipeline (lint → build → test) runs automatically on every PR. A PR cannot be merged with a failing CI.
-
-Dependabot (`.github/dependabot.yml`) opens one grouped PR a week to bump the GitHub Actions used by the workflows. The package has no third-party Swift dependencies, so nothing else is tracked.
-
-## Releasing
-
-Releases are cut by pushing a tag. A GitHub Actions workflow (`.github/workflows/release.yml`) then lints, builds, tests, packages the `.dmg`, and publishes a GitHub Release automatically.
-
-```sh
-git tag v0.3.0
-git push origin v0.3.0
-```
-
-The version comes from the tag (`vX.Y.Z` → `X.Y.Z`) and is injected into the app at build time — no need to edit `Info.plist`. The `CFBundleShortVersionString` checked into `Supporting/Info.plist` is only a placeholder for local `swift run` builds; every packaged build overwrites it. Releases are published as stable, which is what keeps `/releases/latest/download/NotchBar.dmg` resolving — that URL skips pre-releases.
-
-This fork does not publish a Homebrew cask: the release workflow only builds the `.dmg` and attaches it to the GitHub Release. The `brew` instructions above belong to upstream.
-
-**Notarization is not planned** — it needs a paid Apple Developer ID, and clearing the quarantine flag is a one-line workaround for the routes that set one. Kept here in case that ever changes: add these repository secrets and follow the commented hooks in `release.yml` / `scripts/package.sh`.
-
-| Secret | For |
-|---|---|
-| `MACOS_CERT_P12_BASE64` | Developer ID Application cert (`.p12`), base64-encoded |
-| `MACOS_CERT_PASSWORD` | the `.p12` password |
-| `APPLE_ID`, `APPLE_TEAM_ID`, `APPLE_APP_PASSWORD` | `notarytool` credentials |
-
-## License
-
-NotchBar is released under the [MIT License](LICENSE).
-
-## Personal build (fork)
-
-This fork (`personal` branch) adds three things on top of upstream:
-
-- the menu bar shows the remaining time **and** the next event (`23 min · → Standup in 35 min`; titles cut at 20 characters);
-- a mini progress bar in the menu bar replaces the icon while an event or a break is running (toggle in settings);
-- breaks (free windows) run from a configurable **Start of day** (default 08:00) to the first event, and any gap between events is a break (the 2 h cap is gone).
-
-Build and install from source (a local build carries no quarantine flag):
-
-```bash
-git pull
-scripts/package.sh
-pkill -x NotchBar; rm -rf /Applications/NotchBar.app
-cp -R dist/NotchBar.app /Applications/ && open /Applications/NotchBar.app
-```
-
-Every rebuild changes the ad-hoc signature, so macOS may ask for Calendar access again.
-
-**Updates and releases.** The main way to update is the build above (`git pull`, then `scripts/package.sh`). The in-app update check only tells you that a newer release exists in [sparowell/Notchapp](https://github.com/sparowell/Notchapp/releases/latest); it does not install anything. Pushing a tag publishes a `.dmg` on that page. Tags must be purely numeric, `v0.5.0` or later (no suffixes such as `-rc1`). That `.dmg` is not notarized, so after copying the app to Applications run:
-
-```bash
-xattr -dr com.apple.quarantine /Applications/NotchBar.app
-```
+MIT, see `LICENSE`.

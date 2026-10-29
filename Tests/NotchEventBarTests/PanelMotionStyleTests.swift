@@ -1,6 +1,6 @@
 import XCTest
 import SwiftUI
-@testable import NotchBar
+@testable import NotchEventBar
 
 final class PanelMotionStyleTests: XCTestCase {
     // MARK: - Motion enabled (Reduce Motion off)

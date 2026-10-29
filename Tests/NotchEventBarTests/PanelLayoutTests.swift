@@ -1,6 +1,6 @@
 import XCTest
 import SwiftUI
-@testable import NotchBar
+@testable import NotchEventBar
 
 final class PanelLayoutTests: XCTestCase {
     private let now = Date(timeIntervalSince1970: 1_800_000_000)

@@ -2,27 +2,27 @@
 import PackageDescription
 
 let package = Package(
-    name: "NotchBar",
+    name: "NotchEventBar",
     defaultLocalization: "en",
     platforms: [
         .macOS(.v14),
     ],
     products: [
         .executable(
-            name: "NotchBar",
-            targets: ["NotchBar"]
+            name: "NotchEventBar",
+            targets: ["NotchEventBar"]
         ),
     ],
     targets: [
         .executableTarget(
-            name: "NotchBar",
+            name: "NotchEventBar",
             path: "Sources",
             resources: [.process("Resources")]
         ),
         .testTarget(
-            name: "NotchBarTests",
-            dependencies: ["NotchBar"],
-            path: "Tests/NotchBarTests"
+            name: "NotchEventBarTests",
+            dependencies: ["NotchEventBar"],
+            path: "Tests/NotchEventBarTests"
         ),
     ]
 )

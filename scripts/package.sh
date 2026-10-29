@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Builds NotchBar.app and packages it into dist/NotchBar.dmg (unsigned / ad-hoc).
+# Builds Notch Event Bar.app and packages it into dist/Notch Event Bar.dmg (unsigned / ad-hoc).
 #
 # Usage: package.sh [SHORT_VERSION] [BUILD_NUMBER]
 #   SHORT_VERSION  overrides CFBundleShortVersionString (e.g. 0.2.0). CI passes
@@ -14,7 +14,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
-APP_NAME="NotchBar"
+APP_NAME="NotchEventBar"
 DIST="$ROOT/dist"
 APP="$DIST/$APP_NAME.app"
 CONTENTS="$APP/Contents"
@@ -32,11 +32,9 @@ BIN_DIR="$(swift build -c release --show-bin-path)"
 echo "==> Assembling $APP_NAME.app"
 cp "$BIN_DIR/$APP_NAME"                    "$CONTENTS/MacOS/$APP_NAME"
 cp -R "$BIN_DIR/${APP_NAME}_${APP_NAME}.bundle" "$CONTENTS/Resources/"
-cp "Supporting/Icon/$APP_NAME.icns"        "$CONTENTS/Resources/$APP_NAME.icns"
+cp "LICENSE"                               "$CONTENTS/Resources/LICENSE.txt"
 cp "Supporting/Info.plist"                 "$CONTENTS/Info.plist"
 /usr/libexec/PlistBuddy -c "Set :CFBundleExecutable $APP_NAME" "$CONTENTS/Info.plist"
-/usr/libexec/PlistBuddy -c "Add :CFBundleIconFile string $APP_NAME" "$CONTENTS/Info.plist" 2>/dev/null \
-  || /usr/libexec/PlistBuddy -c "Set :CFBundleIconFile $APP_NAME" "$CONTENTS/Info.plist"
 
 if [ -n "$SHORT_VERSION" ]; then
   echo "==> Setting version $SHORT_VERSION"

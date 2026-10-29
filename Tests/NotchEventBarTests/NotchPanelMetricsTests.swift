@@ -1,5 +1,5 @@
 import XCTest
-@testable import NotchBar
+@testable import NotchEventBar
 
 final class NotchPanelMetricsTests: XCTestCase {
     // The settings orb is an overlay, so it paints over the content's top-trailing

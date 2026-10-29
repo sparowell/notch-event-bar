@@ -1,6 +1,6 @@
 @preconcurrency import UserNotifications
 import XCTest
-@testable import NotchBar
+@testable import NotchEventBar
 
 final class NotificationAuthorizationTests: XCTestCase {
     func test_state_isAllowed_whenTheSystemSaysYes() {

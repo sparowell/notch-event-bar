@@ -26,7 +26,7 @@ jobs:
         run: |
           version="${GITHUB_REF_NAME#v}"
           echo "version=$version" >> "$GITHUB_OUTPUT"
-          echo "Releasing NotchBar $version (build $GITHUB_RUN_NUMBER) from tag $GITHUB_REF_NAME"
+          echo "Releasing NotchEventBar $version (build $GITHUB_RUN_NUMBER) from tag $GITHUB_REF_NAME"
 
       - name: Install SwiftLint
         env:
@@ -52,21 +52,21 @@ jobs:
         run: scripts/package.sh "${{ steps.version.outputs.version }}" "$GITHUB_RUN_NUMBER"
 
       # --- Notarization (not planned) ---
-      # NotchBar ships ad-hoc signed. Notarization needs a paid Apple Developer
+      # Notch Event Bar ships ad-hoc signed. Notarization needs a paid Apple Developer
       # ID and is not on the roadmap; releases are stable regardless. Should one
       # ever exist: before "Package .dmg" import the Developer ID cert into a
       # temp keychain from secrets MACOS_CERT_P12_BASE64 / MACOS_CERT_PASSWORD,
       # replace `--sign -` in scripts/package.sh with the identity, then after
       # "Package .dmg" add:
-      #   xcrun notarytool submit dist/NotchBar.dmg --apple-id "$APPLE_ID" \
+      #   xcrun notarytool submit dist/Notch Event Bar.dmg --apple-id "$APPLE_ID" \
       #     --team-id "$APPLE_TEAM_ID" --password "$APPLE_APP_PASSWORD" --wait
-      #   xcrun stapler staple dist/NotchBar.dmg
+      #   xcrun stapler staple dist/Notch Event Bar.dmg
 
       - name: Publish GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "$GITHUB_REF_NAME" \
-            dist/NotchBar.dmg \
-            --title "NotchBar $GITHUB_REF_NAME" \
+            dist/NotchEventBar.dmg \
+            --title "Notch Event Bar $GITHUB_REF_NAME" \
             --generate-notes

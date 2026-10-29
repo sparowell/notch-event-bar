@@ -27,7 +27,7 @@ struct SettingsView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("NotchBar")
+            Text("Notch Event Bar")
                 .font(.headline)
 
             if calendarManager.authorizationState == .denied {
@@ -40,7 +40,7 @@ struct SettingsView: View {
             } else if calendarManager.authorizationState == .insufficient {
                 Text(
                     """
-                    NotchBar has write-only calendar access and cannot read your events. \
+                    Notch Event Bar has write-only calendar access and cannot read your events. \
                     Switch it to Full Access in System Settings > Privacy & Security > Calendars.
                     """,
                     bundle: Localized.resources
@@ -126,7 +126,7 @@ struct SettingsView: View {
                 Button {
                     NSApplication.shared.terminate(nil)
                 } label: {
-                    Text("Quit NotchBar", bundle: Localized.resources)
+                    Text("Quit Notch Event Bar", bundle: Localized.resources)
                 }
                 .buttonStyle(.plain)
                 .font(.system(size: 12))
@@ -159,7 +159,7 @@ struct SettingsView: View {
     /// something that never happens unless the user is told where to undo it.
     private var blockedNotificationsNote: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text("Notifications are blocked for NotchBar in System Settings.", bundle: Localized.resources)
+            Text("Notifications are blocked for Notch Event Bar in System Settings.", bundle: Localized.resources)
                 .font(.footnote)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)

@@ -3,7 +3,7 @@ import Combine
 import SwiftUI
 
 @main
-struct NotchBarApp: App {
+struct NotchEventBarApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
 
     var body: some Scene {
@@ -28,7 +28,7 @@ struct NotchBarApp: App {
 }
 
 /// The status item itself: icon alone, plus the remaining time of the running
-/// event when the countdown preference is on. This is the only place NotchBar
+/// event when the countdown preference is on. This is the only place Notch Event Bar
 /// shows anything without being hovered.
 struct MenuBarStatusLabel: View {
     @ObservedObject var progressModel: EventProgressModel
@@ -47,7 +47,7 @@ struct MenuBarStatusLabel: View {
             .accessibilityValue(Text(countdown))
         } else {
             menuBarIcon
-                .accessibilityLabel(Text(verbatim: "NotchBar"))
+                .accessibilityLabel(Text(verbatim: "Notch Event Bar"))
                 .accessibilityValue(Text(verbatim: progressBar.map { "\(Int(($0.progress * 100).rounded()))%" } ?? ""))
         }
     }

@@ -55,7 +55,7 @@ final class Preferences: ObservableObject {
         }
     }
 
-    /// Off by default: it is the only thing NotchBar draws at rest, and what it
+    /// Off by default: it is the only thing Notch Event Bar draws at rest, and what it
     /// costs — sliding with the desktop during an interactive Space switch — is
     /// for the user to accept, not for the app to assume.
     @Published var showsRestingProgressLine: Bool {

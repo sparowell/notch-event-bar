@@ -1,5 +1,5 @@
 import XCTest
-@testable import NotchBar
+@testable import NotchEventBar
 
 final class LocalizationTests: XCTestCase {
     func test_resources_carryBothLocalizations() {
@@ -36,9 +36,9 @@ final class LocalizationTests: XCTestCase {
 
     func test_frenchBlockedNotifications_resolves() {
         let value = Localized.string(
-            "Notifications are blocked for NotchBar in System Settings.",
+            "Notifications are blocked for Notch Event Bar in System Settings.",
             locale: Locale(identifier: "fr")
         )
-        XCTAssertEqual(value, "Les notifications de NotchBar sont bloquées dans les Réglages Système.")
+        XCTAssertEqual(value, "Les notifications de NotchEventBar sont bloquées dans les Réglages Système.")
     }
 }

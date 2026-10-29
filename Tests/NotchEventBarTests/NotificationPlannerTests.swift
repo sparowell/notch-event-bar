@@ -1,6 +1,6 @@
 import SwiftUI
 import XCTest
-@testable import NotchBar
+@testable import NotchEventBar
 
 final class NotificationPlannerTests: XCTestCase {
     private let calendarID = "test-cal"

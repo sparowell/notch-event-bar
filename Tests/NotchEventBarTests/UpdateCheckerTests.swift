@@ -1,9 +1,9 @@
 @preconcurrency import XCTest
-@testable import NotchBar
+@testable import NotchEventBar
 
 @MainActor
 final class UpdateCheckerTests: XCTestCase {
-    private let releaseURL = URL(string: "https://github.com/sparowell/Notchapp/releases/tag/v0.4.0")!
+    private let releaseURL = URL(string: "https://github.com/sparowell/notch-event-bar/releases/tag/v0.4.0")!
 
     private struct OfflineError: Error {}
 
@@ -69,7 +69,7 @@ final class UpdateCheckerTests: XCTestCase {
     func test_latestReleaseURL_pointsAtTheRepository() {
         XCTAssertEqual(
             LatestReleaseLocator.latestReleaseURL.absoluteString,
-            "https://github.com/sparowell/Notchapp/releases/latest"
+            "https://github.com/sparowell/notch-event-bar/releases/latest"
         )
     }
 
@@ -107,7 +107,7 @@ final class UpdateCheckerTests: XCTestCase {
         try FileManager.default.createDirectory(at: contents, withIntermediateDirectories: true)
         addTeardownBlock { try? FileManager.default.removeItem(at: url) }
 
-        var plist: [String: String] = ["CFBundleIdentifier": "com.periicles.NotchBarTests.\(UUID().uuidString)"]
+        var plist: [String: String] = ["CFBundleIdentifier": "com.sparowell.NotchEventBarTests.\(UUID().uuidString)"]
         plist.merge(info) { _, new in new }
         let data = try PropertyListSerialization.data(fromPropertyList: plist, format: .xml, options: 0)
         try data.write(to: contents.appendingPathComponent("Info.plist"))

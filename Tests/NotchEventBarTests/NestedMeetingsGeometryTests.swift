@@ -1,5 +1,5 @@
 import XCTest
-@testable import NotchBar
+@testable import NotchEventBar
 
 final class NestedMeetingsGeometryTests: XCTestCase {
     private typealias G = NestedMeetingsGeometry

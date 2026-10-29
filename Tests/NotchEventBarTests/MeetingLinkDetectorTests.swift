@@ -1,5 +1,5 @@
 import XCTest
-@testable import NotchBar
+@testable import NotchEventBar
 
 final class MeetingLinkDetectorTests: XCTestCase {
     func test_zoomJoinURL_inURLField() {

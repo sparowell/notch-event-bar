@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// The one thing NotchBar draws while the panel is closed, and only when asked:
+/// The one thing Notch Event Bar draws while the panel is closed, and only when asked:
 /// a hairline under the notch filled with the running event's progress.
 ///
 /// It is off by default because anything drawn at rest slides with the desktop

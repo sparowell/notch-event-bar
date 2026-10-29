@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
     <key>CFBundleIdentifier</key>
-    <string>com.periicles.NotchBar</string>
+    <string>com.sparowell.NotchEventBar</string>
     <key>CFBundleDisplayName</key>
-    <string>NotchBar</string>
+    <string>Notch Event Bar</string>
     <key>CFBundleName</key>
-    <string>NotchBar</string>
+    <string>Notch Event Bar</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundlePackageType</key>
@@ -19,9 +19,9 @@
     <key>LSUIElement</key>
     <true/>
     <key>NSCalendarsUsageDescription</key>
-    <string>NotchBar shows your meeting progress.</string>
+    <string>Notch Event Bar shows your meeting progress.</string>
     <key>NSCalendarsFullAccessUsageDescription</key>
-    <string>NotchBar shows your meeting progress.</string>
+    <string>Notch Event Bar shows your meeting progress.</string>
     <key>LSMinimumSystemVersion</key>
     <string>14.0</string>
     <key>CFBundleDevelopmentRegion</key>
