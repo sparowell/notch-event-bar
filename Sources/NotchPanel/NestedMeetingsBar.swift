@@ -99,6 +99,8 @@ enum NestedMeetingsGeometry {
 struct NestedMeetingsBar: View {
     static let barHeight: CGFloat = 13
     static let capsuleHeight: CGFloat = 23
+    /// A meeting that is over takes less room: it only marks a busy slot.
+    static let pastCapsuleHeight: CGFloat = 17
     static let tickWidth: CGFloat = 1.5
     static let capsuleBorderWidth: CGFloat = 1.5
     /// Space between a capsule's top and the label's bottom.
@@ -153,6 +155,7 @@ struct NestedMeetingsBar: View {
 
                 ForEach(meetings.indices, id: \.self) { i in
                     let meeting = meetings[i]
+                    let capsuleHeight = meeting.isPast ? Self.pastCapsuleHeight : Self.capsuleHeight
 
                     Capsule()
                         .fill(meeting.isPast ? Self.pastFill : Self.futureFill)
@@ -162,8 +165,8 @@ struct NestedMeetingsBar: View {
                                 lineWidth: Self.capsuleBorderWidth
                             )
                         )
-                        .frame(width: capsules[i].width, height: Self.capsuleHeight)
-                        .offset(x: capsules[i].x, y: -overhang)
+                        .frame(width: capsules[i].width, height: capsuleHeight)
+                        .offset(x: capsules[i].x, y: -(capsuleHeight - geo.size.height) / 2)
 
                     if !meeting.isPast {
                         label(for: meeting, showsCountdown: i == nearest, anchor: anchors[i])
