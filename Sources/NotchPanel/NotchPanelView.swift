@@ -156,7 +156,7 @@ private struct InProgressContent: View {
                 .padding(.top, gap)
 
             HStack(alignment: .top, spacing: 16) {
-                MetricLabel(titleKey: "Elapsed", emoji: "⏱", usesEmoji: usesEmojiLabels, value: snapshot.elapsedLabel)
+                MetricLabel(titleKey: "Elapsed", emoji: "⏱️", usesEmoji: usesEmojiLabels, value: snapshot.elapsedLabel)
                     .fixedSize()
 
                 MetricLabel(titleKey: "Remaining", emoji: "⏳", usesEmoji: usesEmojiLabels, value: snapshot.remainingLabel)
