@@ -21,7 +21,8 @@ enum SnapshotBuilder {
             .sorted { $0.startDate < $1.startDate }
 
         // Overlapping events: the one ending first is the one the user is
-        // waiting on; the others are only counted.
+        // waiting on; the others are only counted. On equal ends the later
+        // started one wins: it is the more specific, nested in the other.
         let running = relevant.filter { $0.startDate <= now && $0.endDate > now }
         let endOfToday = calendar.startOfDay(for: now.addingTimeInterval(86400))
         let upcoming = relevant.filter { $0.startDate > now }
@@ -31,7 +32,9 @@ enum SnapshotBuilder {
             .map(\.title)
             .filter { !$0.isEmpty }
 
-        if let current = running.min(by: { $0.endDate < $1.endDate }) {
+        if let current = running.min(by: {
+            $0.endDate != $1.endDate ? $0.endDate < $1.endDate : $0.startDate > $1.startDate
+        }) {
             var snapshot = inProgressSnapshot(for: current, now: now, calendar: calendar, locale: locale)
             snapshot.concurrentEventCount = running.count - 1
             if let next = upcoming.first, next.startDate < endOfToday {

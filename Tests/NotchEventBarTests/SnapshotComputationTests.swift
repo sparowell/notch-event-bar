@@ -679,6 +679,23 @@ final class SnapshotComputationTests: XCTestCase {
         XCTAssertEqual(snapshot.concurrentEventCount, 1)
     }
 
+    func test_inProgress_showsTheLaterStarted_whenEventsEndTogether() {
+        let now = fixedNoon()
+        let snapshot = SnapshotBuilder.computeSnapshot(
+            events: [
+                makeEvent(title: "Evening block", startOffset: -3600, durationSeconds: 3 * 3600, relativeTo: now),
+                makeEvent(title: "All-Hands", startOffset: 0, durationSeconds: 2 * 3600, relativeTo: now),
+            ],
+            selectedCalendarIDs: [calendarID],
+            now: now,
+            calendar: calendar,
+            locale: english
+        )
+
+        XCTAssertEqual(snapshot.title, "All-Hands")
+        XCTAssertEqual(snapshot.concurrentEventCount, 1)
+    }
+
     func test_inProgress_hasNoConcurrentEvents_whenAlone() {
         let now = fixedNoon()
         let snapshot = SnapshotBuilder.computeSnapshot(
