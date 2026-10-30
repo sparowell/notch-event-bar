@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.2
+
+- Fix: when a meeting nested in a block ends together with it, the panel now switches to the meeting instead of staying on the block.
+
 ## 0.5.1
 
 - App icon.
