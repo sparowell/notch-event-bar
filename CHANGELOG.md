@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.3
+
+- Fix: the stopwatch emoji for Elapsed was invisible in the panel when emoji labels are on.
+
 ## 0.5.2
 
 - Fix: when a meeting nested in a block ends together with it, the panel now switches to the meeting instead of staying on the block.
